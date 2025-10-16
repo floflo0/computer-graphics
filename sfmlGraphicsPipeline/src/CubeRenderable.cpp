@@ -3,6 +3,7 @@
 #include "./../include/log.hpp"
 #include "./../include/Utils.hpp"
 
+
 #include <glm/gtc/type_ptr.hpp>
 #include <GL/glew.h>
 
@@ -11,6 +12,7 @@ CubeRenderable::CubeRenderable(ShaderProgramPtr shaderProgram)
   : Renderable(shaderProgram), m_vBuffer(0), m_vColorBuffer(0)
 {
 
+	/* Exercice 1
 	// Build the geometry : just a simple triangle for now
 	m_positions.push_back( glm::vec3 (-1 ,0 ,0) );
 	m_positions.push_back( glm::vec3 (1 ,0 ,0) );
@@ -37,7 +39,52 @@ CubeRenderable::CubeRenderable(ShaderProgramPtr shaderProgram)
 	glcheck(glBindBuffer(GL_ARRAY_BUFFER, m_vColorBuffer));
 	glcheck(glBufferData(GL_ARRAY_BUFFER, m_colors.size() * sizeof(glm::vec3), m_colors.data(), GL_STATIC_DRAW));
 
+	*/
 	
+
+	// Exercice 2 : Creation of a cube
+
+	std::vector< glm::vec3 > normals;
+	std::vector< glm::vec2 > tcoords;
+
+	// Call the getUnitCube fonction that will fill its 3 parameters
+	getUnitCube(m_positions, normals, tcoords);
+
+	glGenBuffers(1, &m_vBuffer); //vertices
+
+	//Activate buffer and send data to the graphics card
+	glBindBuffer(GL_ARRAY_BUFFER, m_vBuffer);
+	glBufferData(GL_ARRAY_BUFFER, m_positions.size()*sizeof(glm::vec3), m_positions.data(), GL_STATIC_DRAW);
+	
+	// Set the model matrix to identity
+	m_model = glm::mat4(1.0);
+
+	// List of colors for the vertices
+	std::vector<glm::vec3> m_colors;
+	
+    // Exemple : une couleur différente par triangle
+    for (size_t i = 0; i < m_positions.size(); i += 3)
+    {
+        glm::vec3 color;
+        switch ((i / 3) % 6) { // 6 faces
+            case 0: color = glm::vec3(1, 0, 0); break; // rouge
+            case 1: color = glm::vec3(0, 1, 0); break; // vert
+            case 2: color = glm::vec3(0, 0, 1); break; // bleu
+            case 3: color = glm::vec3(1, 1, 0); break; // jaune
+            case 4: color = glm::vec3(1, 0, 1); break; // magenta
+            case 5: color = glm::vec3(0, 1, 1); break; // cyan
+        }
+        // Trois fois la même couleur par triangle
+        m_colors.push_back(color);
+        m_colors.push_back(color);
+        m_colors.push_back(color);
+    }
+
+	//Create buffers
+	glcheck(glGenBuffers(1, &m_vColorBuffer));
+	glcheck(glBindBuffer(GL_ARRAY_BUFFER, m_vColorBuffer));
+	glcheck(glBufferData(GL_ARRAY_BUFFER, m_colors.size() * sizeof(glm::vec3), m_colors.data(), GL_STATIC_DRAW));
+
 }
 
 void CubeRenderable::do_draw()
