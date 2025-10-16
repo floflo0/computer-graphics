@@ -11,9 +11,9 @@ CubeRenderable::CubeRenderable(ShaderProgramPtr shaderProgram)
   : Renderable(shaderProgram), m_vBuffer(0)
 {
 	// Build the geometry : just a simple triangle for now
-	// m_positions.push_back( glm::vec3 (-1 ,0 ,0) );
-	// m_positions.push_back( glm::vec3 (1 ,0 ,0) );
-	// m_positions.push_back( glm::vec3 (0 ,1 ,0) );
+	m_positions.push_back( glm::vec3 (-1 ,0 ,0) );
+	m_positions.push_back( glm::vec3 (1 ,0 ,0) );
+	m_positions.push_back( glm::vec3 (0 ,1 ,0) );
 
 	// Set the model matrix to identity
 	m_model = glm::mat4(1.0);
@@ -24,6 +24,7 @@ CubeRenderable::CubeRenderable(ShaderProgramPtr shaderProgram)
 	//Activate buffer and send data to the graphics card
 	glBindBuffer(GL_ARRAY_BUFFER, m_vBuffer);
 	glBufferData(GL_ARRAY_BUFFER, m_positions.size()*sizeof(glm::vec3), m_positions.data(), GL_STATIC_DRAW);
+	
 }
 
 void CubeRenderable::do_draw()
