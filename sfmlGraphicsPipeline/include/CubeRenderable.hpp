@@ -16,6 +16,7 @@ class CubeRenderable : public Renderable
 
         std::vector< glm::vec3 > m_positions;
         unsigned int m_vBuffer;
+        unsigned int m_vColorBuffer;
 
         glm::mat4 m_model;
 };
