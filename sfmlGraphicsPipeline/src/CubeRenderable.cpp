@@ -50,6 +50,8 @@ CubeRenderable::CubeRenderable(ShaderProgramPtr shaderProgram)
 	// Call the getUnitCube fonction that will fill its 3 parameters
 	getUnitCube(m_positions, normals, tcoords);
 
+	// std::cout << "Vertices" << normals.size() << std::endl ;
+
 	glGenBuffers(1, &m_vBuffer); //vertices
 
 	//Activate buffer and send data to the graphics card
@@ -117,6 +119,7 @@ void CubeRenderable::do_draw()
 	//glDisableVertexAttribArray( positionLocation );
 
 	glDisableVertexAttribArray( color_location );
+	glDisableVertexAttribArray( positionLocation );
 }
 
 CubeRenderable::~CubeRenderable()
