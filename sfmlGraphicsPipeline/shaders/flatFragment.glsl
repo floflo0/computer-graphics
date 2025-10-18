@@ -1,12 +1,10 @@
 #version 400
 
-in vec4 surfel_color;
-
 uniform float time;
 
+in vec4 color;
 out vec4 fragmentColor;
 
-void main()
-{
-    fragmentColor = surfel_color;
+void main() {
+    fragmentColor = color;
 }

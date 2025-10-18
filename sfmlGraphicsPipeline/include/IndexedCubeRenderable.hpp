@@ -9,22 +9,19 @@ class IndexedCubeRenderable : public Renderable
 {
     public:
         ~IndexedCubeRenderable();
-        IndexedCubeRenderable( ShaderProgramPtr program );
+        IndexedCubeRenderable(ShaderProgramPtr program);
 
     private:
         void do_draw();
 
+        std::vector<glm::vec3> m_base_coordinates;
+        std::vector<unsigned int> m_triangles_indices;
+        std::vector<glm::vec3> m_colors;
         unsigned int m_vBuffer;
         unsigned int m_vColorBuffer;
-        unsigned int m_iBuffer;
-
-    	std::vector< glm::vec3 > base_coord;
-	    std::vector< unsigned int > triangles_indices;
-	    std::vector<glm::vec3> m_colors; 	// List of colors for each vertices
-
-        glm::mat4 m_model;
+        unsigned int m_indicesBuffer;
 };
 
 typedef std::shared_ptr<IndexedCubeRenderable> IndexedCubeRenderablePtr;
 
-#endif
+#endif  // INDEXED_CUBE_RENDERABLE_HPP

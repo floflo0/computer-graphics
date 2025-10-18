@@ -14,11 +14,10 @@ class CubeRenderable : public Renderable
     private:
         void do_draw();
 
-        std::vector< glm::vec3 > m_positions;
+        std::vector<glm::vec3> m_positions;
+        std::vector<glm::vec3> m_colors;
         unsigned int m_vBuffer;
         unsigned int m_vColorBuffer;
-
-        glm::mat4 m_model;
 };
 
 typedef std::shared_ptr<CubeRenderable> CubeRenderablePtr;
