@@ -3,10 +3,10 @@
 uniform mat4 projMat, viewMat, modelMat;
 
 in vec3 vPosition;
-out vec4 surfel_color;
+in vec3 vColor;
+out vec4 color;
 
-void main()
-{
-    gl_Position = projMat*viewMat*modelMat*vec4(vPosition, 1.0f);
-    surfel_color = vec4(1, 0, 0, 1);
+void main() {
+    gl_Position = projMat * viewMat * modelMat * vec4(vPosition, 1.0);
+    color = vec4(vColor, 1.0);
 }

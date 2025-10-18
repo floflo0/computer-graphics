@@ -12,27 +12,26 @@
 
 bool PriorityComparator::operator()(const RenderablePtr & a, const RenderablePtr & b) const
 {
-    return a->priority() > b->priority(); 
+    return a->priority() > b->priority();
 }
 
-static const Viewer::Duration g_modeInformationTextTimeout = std::chrono::seconds( 3 );
+static const Viewer::Duration g_modeInformationTextTimeout = std::chrono::seconds(3);
 
 static const std::string screenshot_basename = "screenshot";
 
-static void initializeGL()
-{
-    //Initialize GLEW
+static void initializeGL() {
+    // Initialize GLEW
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
-    if( GLEW_OK != err )
-        LOG( error, "[GLEW] " << glewGetErrorString(err) );
-    LOG( info, "[GLEW] using version " << glewGetString( GLEW_VERSION ) );
+    if (err != GLEW_OK) {
+        LOG(error, "[GLEW] " << glewGetErrorString(err));
+        std::exit(EXIT_FAILURE);
+    }
+    LOG(info, "[GLEW] using version " << glewGetString(GLEW_VERSION));
 }
 
 Viewer::KeyboardState::KeyboardState()
-    : speed( 3.0f ), orientation(0.0f), 
-      aspeed(2.0f), direction(0.0f)
-{}
+    : speed(3.0f), orientation(0.0f), aspeed(2.0f), direction(0.0f) {}
 
 glm::vec3 Viewer::KeyboardState::normalized_direction(){
     if(glm::any(glm::bvec3(direction)))
@@ -56,8 +55,8 @@ Viewer::Viewer(float width, float height, const glm::vec4 & background_color) :
     m_loopDuration{120}, m_simulationTime{0},
     m_screenshotCounter{0}, m_helpDisplayed{false}, m_helpDisplayRequest{false},
     m_lastEventHandleTime{ clock::now() },
-    m_background_color{background_color}   
-{   
+    m_background_color{background_color}
+{
     sf::ContextSettings settings = m_window.getSettings();
     LOG( info, "Settings of OPENGL Context created by SFML");
     LOG( info, "\tdepth bits:         " << settings.depthBits );
@@ -137,33 +136,33 @@ void Viewer::draw()
     }
 
     for(const RenderablePtr & r : m_renderables)
-    {   
+    {
         if( r->getShaderProgram() )
         {
             r->bindShaderProgram();
             int projectionLocation = r->projectionLocation();
             if(projectionLocation != ShaderProgram::null_location)
                 glcheck(glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(m_camera.projectionMatrix())));
-            
+
             int viewLocation = r->viewLocation();
             if(viewLocation != ShaderProgram::null_location)
                 glcheck(glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(m_camera.viewMatrix())));
 
-            // Texture 
+            // Texture
             int texsamplerLocation = r->getShaderProgram()->getUniformLocation("ViewerTexSampler");
             if (texsamplerLocation != ShaderProgram::null_location)
-            {   
+            {
                 glEnable(GL_TEXTURE_2D);
                 glActiveTexture(GL_TEXTURE0);
                 sf::Texture::bind(&(m_texture.getTexture()));
                 glUniform1i(texsamplerLocation, 0) ;
             }
-            
+
         }
         if(r->getRenderMode() <= Renderable::RENDER_MODE::WINDOW_TEXTURE)
         {
             r->draw();
-        }  
+        }
         if(r->getRenderMode() >= Renderable::RENDER_MODE::WINDOW_TEXTURE)
         {
             m_texture.setActive(true);
@@ -270,7 +269,7 @@ void Viewer::resetAnimation()
 
 
 void Viewer::addRenderable(const RenderablePtr & r)
-{   
+{
     r->m_viewer = this;
     m_renderables.insert(r);
 }
@@ -279,7 +278,7 @@ void Viewer::keyPressedEvent(sf::Event& e)
 {
     switch (e.key.code)
     {
-    case sf::Keyboard::C:   
+    case sf::Keyboard::C:
         changeCameraMode();
         break;
     case sf::Keyboard::R:
@@ -306,7 +305,7 @@ void Viewer::keyPressedEvent(sf::Event& e)
         {
             startAnimation();
             LOG(info, "Animation resumed.")
-        } 
+        }
         break;
     case sf::Keyboard::F5:
         resetAnimation();
@@ -350,12 +349,12 @@ void Viewer::keyPressedEvent(sf::Event& e)
     case sf::Keyboard::Left:
         m_keyboard.orientation.y = -1;
         break;
-    
+
     case sf::Keyboard::Add:
         m_keyboard.speed *= 1.1;
         LOG(info, "Movement speed = "<<m_keyboard.speed);
         break;
-    
+
     case sf::Keyboard::Subtract:
         m_keyboard.speed /= 1.1;
         LOG(info, "Movement speed  = "<<m_keyboard.speed);
@@ -442,7 +441,7 @@ void Viewer::mousePressEvent(sf::Event& e)
 }
 
 void Viewer::mouseReleaseEvent(sf::Event& e)
-{   
+{
     m_camera.mouseRelease();
     for(const RenderablePtr & r : m_renderables)
         r->mouseReleaseEvent(e);
@@ -545,7 +544,7 @@ void Viewer::handleEvent()
     else if( m_camera.getBehavior() == Camera::FIRST_PERSON_BEHAVIOR)
     {
         float dt = Duration(clock::now() - m_lastEventHandleTime).count();
- 
+
         // Translations
 
         glm::vec3 step = m_keyboard.speed * dt * m_keyboard.normalized_direction();
@@ -553,7 +552,7 @@ void Viewer::handleEvent()
         glm::vec3 flat_forward = normalize(forward * glm::vec3(1.0f, 0.0f, 1.0f));
         glm::vec3 flat_right = normalize(m_camera.getRight() * glm::vec3(1.0f, 0.0f, 1.0f));
         glm::vec3 displacement = step.z * flat_forward + step.x * flat_right + step.y * glm::vec3(0.0f, 1.0f, 0.0f);
-        
+
         // Rotations
         glm::vec2 astep = m_keyboard.aspeed * dt;
         // f --> (phi, theta) --> (phi', theta') --> f'
@@ -568,7 +567,7 @@ void Viewer::handleEvent()
         glm::vec3 new_forward(std::cos(phi) * sintheta, std::cos(theta), std::sin(phi) * sintheta);
 
         // Set view matrix
-        glm::vec3 cpos = m_camera.getPosition() + displacement; 
+        glm::vec3 cpos = m_camera.getPosition() + displacement;
         glm::mat4 new_view = glm::lookAt(cpos, cpos + new_forward, glm::vec3{0,1,0});
         m_camera.setViewMatrix(new_view);
     }
@@ -595,7 +594,7 @@ void Viewer::takeScreenshot()
 }
 
 void Viewer::changeCameraMode()
-{  
+{
     Camera::CAMERA_BEHAVIOR mode = m_camera.getBehavior();
     m_camera.incrementBehavior();
 }
