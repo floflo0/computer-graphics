@@ -1,6 +1,7 @@
 #include <glm/glm.hpp>
 
-#include <CubeRenderable.hpp>
+// #include <CubeRenderable.hpp>
+#include <IndexedCubeRenderable.hpp>
 #include <FrameRenderable.hpp>
 #include <ShaderProgram.hpp>
 #include <Viewer.hpp>
@@ -43,7 +44,10 @@ int main() {
     viewer.addShaderProgram(flatShader);
 
     // Instantiate a CubeRenderable while specifying its shader program
-    CubeRenderablePtr cube = std::make_shared<CubeRenderable>(flatShader);
+    // CubeRenderablePtr cube = std::make_shared<CubeRenderable>(flatShader);
+    IndexedCubeRenderablePtr cube = std::make_shared<IndexedCubeRenderable>(
+        flatShader
+    );
 
     // Add the renderable to the Viewer
     viewer.addRenderable(cube);
