@@ -1,12 +1,12 @@
 #include "./../include/IndexedCubeRenderable.hpp"
 #include "./../include/gl_helper.hpp"
-#include "./../include/Utils.hpp"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <GL/glew.h>
 
 IndexedCubeRenderable::IndexedCubeRenderable(ShaderProgramPtr shaderProgram)
-    : Renderable(shaderProgram), m_vBuffer(0), m_vColorBuffer(0) {
+    : Renderable(shaderProgram), m_vBuffer(0), m_vColorBuffer(0),
+      m_indicesBuffer(0) {
     m_base_coordinates = {
         {-0.5f, -0.5f, -0.5f},
         {-0.5f,  0.5f, -0.5f},

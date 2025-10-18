@@ -1,8 +1,8 @@
 #include <glm/glm.hpp>
 
 #include <CubeRenderable.hpp>
-#include <IndexedCubeRenderable.hpp>
 #include <FrameRenderable.hpp>
+#include <IndexedCubeRenderable.hpp>
 #include <ShaderProgram.hpp>
 #include <Viewer.hpp>
 

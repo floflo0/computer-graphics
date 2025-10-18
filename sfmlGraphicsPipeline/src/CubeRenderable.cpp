@@ -2,12 +2,13 @@
 #include "./../include/gl_helper.hpp"
 #include "./../include/Utils.hpp"
 
+
 #include <glm/gtc/type_ptr.hpp>
 #include <GL/glew.h>
 
 
 CubeRenderable::CubeRenderable(ShaderProgramPtr shaderProgram)
-  : Renderable(shaderProgram), m_vBuffer(0), m_vColorBuffer(0) {
+    : Renderable(shaderProgram), m_vBuffer(0), m_vColorBuffer(0) {
     // Exercice 1
     // Build the geometry : just a simple triangle for now.
     // m_positions.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
@@ -65,7 +66,7 @@ CubeRenderable::CubeRenderable(ShaderProgramPtr shaderProgram)
     glcheck(glBufferData(GL_ARRAY_BUFFER,
                          m_colors.size() * sizeof(glm::vec3),
                          m_colors.data(), GL_STATIC_DRAW));
-  }
+}
 
 void CubeRenderable::do_draw() {
     // Get the identifier (location) of the uniform modelMat in the shader program
