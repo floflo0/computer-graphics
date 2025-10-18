@@ -1,5 +1,6 @@
 #include "./../include/CubeRenderable.hpp"
 #include "./../include/gl_helper.hpp"
+#include "./../include/Utils.hpp"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <GL/glew.h>
@@ -7,14 +8,45 @@
 
 CubeRenderable::CubeRenderable(ShaderProgramPtr shaderProgram)
   : Renderable(shaderProgram), m_vBuffer(0), m_vColorBuffer(0) {
+    // Exercice 1
     // Build the geometry : just a simple triangle for now.
-    m_positions.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
-    m_positions.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-    m_positions.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+    // m_positions.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
+    // m_positions.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+    // m_positions.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
 
-    m_colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));  // red
-    m_colors.push_back(glm::vec3(0.0f, 1.0f, 0.0f));  // green
-    m_colors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));  // blue
+    // m_colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));  // red
+    // m_colors.push_back(glm::vec3(0.0f, 1.0f, 0.0f));  // green
+    // m_colors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));  // blue
+
+    // Exercice 2
+    std::vector<glm::vec3> normals;
+    std::vector<glm::vec2> tcoords;
+    getUnitCube(m_positions, normals, tcoords);
+
+    const glm::vec3 colors[] = {
+        glm::vec3(1.0f, 0.0f, 0.0f),  // red
+        glm::vec3(0.0f, 1.0f, 0.0f),  // green
+        glm::vec3(0.0f, 0.0f, 1.0f),  // dark blue
+        glm::vec3(1.0f, 1.0f, 0.0f),  // yellow
+        glm::vec3(1.0f, 0.0f, 1.0f),  // magenta
+        glm::vec3(0.0f, 1.0f, 1.0f),  // cyan
+        glm::vec3(1.0f, 0.5f, 0.0f),  // orange
+        glm::vec3(1.0f, 0.0f, 0.5f),  // pink
+        glm::vec3(0.0f, 1.0f, 0.5f),  // springgreen
+        glm::vec3(0.5f, 1.0f, 0.0f),  // light green
+        glm::vec3(0.5f, 0.0f, 1.0f),  // violet
+        glm::vec3(0.0f, 0.5f, 1.0f),  // blue
+    };
+
+    m_colors.reserve(m_positions.size());
+
+    for (size_t i = 0; i < m_positions.size(); i += 3) {
+        const glm::vec3 &color = colors[i / 3];
+        // Trois fois la même couleur par triangle.
+        m_colors.push_back(color);
+        m_colors.push_back(color);
+        m_colors.push_back(color);
+    }
 
     // Set the model matrix to identity.
     m_model = glm::mat4(1.0f);
