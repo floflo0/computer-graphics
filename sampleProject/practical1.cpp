@@ -1,6 +1,6 @@
 #include <glm/glm.hpp>
 
-// #include <CubeRenderable.hpp>
+#include <CubeRenderable.hpp>
 #include <IndexedCubeRenderable.hpp>
 #include <FrameRenderable.hpp>
 #include <ShaderProgram.hpp>
@@ -44,13 +44,36 @@ int main() {
     viewer.addShaderProgram(flatShader);
 
     // Instantiate a CubeRenderable while specifying its shader program
-    // CubeRenderablePtr cube = std::make_shared<CubeRenderable>(flatShader);
-    IndexedCubeRenderablePtr cube = std::make_shared<IndexedCubeRenderable>(
+    CubeRenderablePtr cube = std::make_shared<CubeRenderable>(flatShader);
+    IndexedCubeRenderablePtr indexedCube = std::make_shared<IndexedCubeRenderable>(
         flatShader
     );
 
+    const glm::mat4 translatedCubeModel = glm::translate(
+        glm::mat4(1.0f),
+        {1.0f, 0.0f, 0.0f}
+    );
+    const glm::mat4 translatedIndexedCubeModel = glm::translate(
+        glm::mat4(1.0f),
+        {-1.0f, 0.0f, 0.0f}
+    );
+
+    const glm::mat4 scaledCubeModel = glm::scale(
+        translatedCubeModel,
+        glm::vec3(1.5f)
+    );
+    const glm::mat4 rotatededIndexedCubeModel = glm::rotate(
+        translatedIndexedCubeModel,
+        M_PI_4f,  // 45 degree
+        {0.0f, 1.0f, 0.0f}  // y axies
+    );
+
+    cube->setModelMatrix(scaledCubeModel);
+    indexedCube->setModelMatrix(rotatededIndexedCubeModel);
+
     // Add the renderable to the Viewer
     viewer.addRenderable(cube);
+    viewer.addRenderable(indexedCube);
 
     // Stage 3: Our program loop
     while (viewer.isRunning()) {

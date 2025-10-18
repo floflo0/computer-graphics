@@ -67,9 +67,6 @@ CubeRenderable::CubeRenderable(ShaderProgramPtr shaderProgram)
                          m_colors.data(), GL_STATIC_DRAW));
   }
 
-PFNGLBINDBUFFERPROC glBindBuffer;
-
-
 void CubeRenderable::do_draw() {
     // Get the identifier (location) of the uniform modelMat in the shader program
     int modelLocation = m_shaderProgram->getUniformLocation("modelMat");

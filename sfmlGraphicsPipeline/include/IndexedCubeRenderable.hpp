@@ -20,8 +20,6 @@ class IndexedCubeRenderable : public Renderable
         unsigned int m_vBuffer;
         unsigned int m_vColorBuffer;
         unsigned int m_indicesBuffer;
-
-        glm::mat4 m_model;
 };
 
 typedef std::shared_ptr<IndexedCubeRenderable> IndexedCubeRenderablePtr;
