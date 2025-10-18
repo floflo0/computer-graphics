@@ -57,6 +57,7 @@ Viewer::Viewer(float width, float height, const glm::vec4 & background_color) :
     m_lastEventHandleTime{ clock::now() },
     m_background_color{background_color}
 {
+    m_window.setFramerateLimit(60);
     sf::ContextSettings settings = m_window.getSettings();
     LOG( info, "Settings of OPENGL Context created by SFML");
     LOG( info, "\tdepth bits:         " << settings.depthBits );
