@@ -22,11 +22,26 @@ void initialize_scene(Viewer &viewer) {
 
     // Add the cylinder to the viewer
     viewer.addRenderable(cylinder);
-    
+
+    const std::string cat_path = "../../sfmlGraphicsPipeline/meshes/cat.obj";
+    MeshRenderablePtr cat = std::make_shared<MeshRenderable>(flatShader, cat_path);
+    cat->setModelMatrix(getTranslationMatrix(-5.0f, 0.0f, 0.0f) *
+                        getRotationMatrix(M_PI, {0.0f, 1.0f, 0.0f}));
+    // Add cat to the viewer
+    viewer.addRenderable(cat);
+
+    const std::string pillar_path = "../../sfmlGraphicsPipeline/meshes/pillar.obj";
+    MeshRenderablePtr pillar = std::make_shared<MeshRenderable>(flatShader, pillar_path);
+    pillar->setModelMatrix(getTranslationMatrix(-5.0f, -3.2f, 0.5f) *
+                           getRotationMatrix(M_PI_2, {0.0f, 0.0f, 1.0f}));
+    // Add pillar to the viewer
+    viewer.addRenderable(pillar);
+
     // Create suzanne
     const std::string suzanne_path = "../../sfmlGraphicsPipeline/meshes/suzanne.obj";
     MeshRenderablePtr suzanne = std::make_shared<MeshRenderable>(flatShader, suzanne_path);
-    suzanne->setModelMatrix(getTranslationMatrix(5,0,0));
+    suzanne->setModelMatrix(getTranslationMatrix(5.0f, 0.0f, 0.0f) *
+                            getRotationMatrix(M_PI, {0.0f, 1.0f, 0.0f}));
     // Add suzanne to the viewer
     viewer.addRenderable(suzanne);
 }
