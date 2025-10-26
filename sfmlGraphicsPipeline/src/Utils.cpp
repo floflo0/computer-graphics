@@ -300,6 +300,8 @@ void getUnitCylinder(vector<glm::vec3> &positions, vector<glm::vec3> &normals,
 
     const glm::vec3 centerTop = glm::vec3(0.0f, topY, 0.0f);
     const glm::vec3 centerBottom = glm::vec3(0.0f, bottomY, 0.0f);
+    const glm::vec3 topNormal = glm::vec3(0.0f, 1.0f, 0.0f);
+    const glm::vec3 bottomNormal = glm::vec3(0.0f, -1.0f, 0.0f);
 
     for(size_t i = 0; i < slices; ++i) {
         const size_t voffset = 12 * i; // 4 x 3 = 12 vertices per slice
@@ -346,32 +348,43 @@ void getUnitCylinder(vector<glm::vec3> &positions, vector<glm::vec3> &normals,
         // Normals
 
         // top triangle
-        // normals[ voffset +  0 ] = ???
-        // normals[ voffset +  1 ] = ???
-        // normals[ voffset +  2 ] = ???
-        
+        normals[voffset + 0] = topNormal;
+        normals[voffset + 1] = topNormal;
+        normals[voffset + 2] = topNormal;
+
         // side triangles
         if (vertex_normals){
+            const glm::vec3 previousNormal = glm::normalize(glm::vec3(
+                previousAngleCos,
+                0.0f,
+                previousAngleSin
+            ));
+            const glm::vec3 normal = glm::normalize(glm::vec3(angleCos, 0.0f,
+                                                              angleSin));
             // Per vertex normals
-            // normals[ voffset +  3 ] = ???
-            // normals[ voffset +  4 ] = ???
-            // normals[ voffset +  5 ] = ???
-            // normals[ voffset +  6 ] = ???
-            // normals[ voffset +  7 ] = ???
-            // normals[ voffset +  8 ] = ???
-        }else{
+            normals[voffset + 3] = previousNormal;
+            normals[voffset + 4] = normal;
+            normals[voffset + 5] = previousNormal;
+            normals[voffset + 6] = previousNormal;
+            normals[voffset + 8] = normal;
+            normals[voffset + 7] = normal;
+        } else {
+            const glm::vec3 normal = glm::normalize(glm::cross(
+                (positions[voffset + 4] - positions[voffset + 3]),
+                (positions[voffset + 5] - positions[voffset + 3])
+            ));
             // Per triangle normals
-            // normals[ voffset +  3 ] = ???
-            // normals[ voffset +  4 ] = ???
-            // normals[ voffset +  5 ] = ???
-            // normals[ voffset +  6 ] = ???
-            // normals[ voffset +  7 ] = ???
-            // normals[ voffset +  8 ] = ???
+            normals[voffset + 3] = normal;
+            normals[voffset + 4] = normal;
+            normals[voffset + 5] = normal;
+            normals[voffset + 6] = normal;
+            normals[voffset + 8] = normal;
+            normals[voffset + 7] = normal;
         }
 
-        // normals[ voffset +  9 ] = ???
-        // normals[ voffset + 10 ] = ???
-        // normals[ voffset + 11 ] = ???
+        normals[voffset +  9] = bottomNormal;
+        normals[voffset + 10] = bottomNormal;
+        normals[voffset + 11] = bottomNormal;
 
         // Texture coordinates (don't modify, might be used later)
 
