@@ -7,13 +7,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <GL/glew.h>
 
-CylinderMeshRenderable::~CylinderMeshRenderable()
-{}
+CylinderMeshRenderable::~CylinderMeshRenderable() {}
 
-CylinderMeshRenderable::CylinderMeshRenderable(ShaderProgramPtr shaderProgram, bool indexed, unsigned int slices, bool vertex_normals) :
-    MeshRenderable(shaderProgram, indexed)
-{
-    if (indexed){
+CylinderMeshRenderable::CylinderMeshRenderable(ShaderProgramPtr shaderProgram,
+                                               bool indexed,
+                                               unsigned int slices,
+                                               bool vertex_normals)
+    : MeshRenderable(shaderProgram, indexed) {
+    if (indexed) {
         std::vector<glm::uvec3> indices;
         getUnitIndexedCylinder(m_positions, m_normals, indices, 3);
         // getUniIndexedCube fills a std::vector<glm::uvec3> of length n,
@@ -23,19 +24,20 @@ CylinderMeshRenderable::CylinderMeshRenderable(ShaderProgramPtr shaderProgram, b
 
         // Set random colors per vertex
         m_colors.resize(m_positions.size(), glm::vec4(0));
-        for (size_t i=0; i<m_colors.size(); ++i)
+        for (size_t i = 0; i < m_colors.size(); ++i) {
             m_colors[i] = randomColor();
-        
-    }else{
+        }
+    } else {
         // Go to Utils.cpp and fill this function
-        getUnitCylinder(m_positions, m_normals, m_tcoords, slices, vertex_normals);
+        getUnitCylinder(m_positions, m_normals, m_tcoords, slices,
+                        vertex_normals);
         // Set random colors per triangle
         m_colors.resize(m_positions.size(), glm::vec4(0));
         for (size_t i=0; i<m_colors.size() / 3; ++i){
             glm::vec4 color = randomColor();
-            m_colors[ 3 * i + 0 ] = color;
-            m_colors[ 3 * i + 1 ] = color;
-            m_colors[ 3 * i + 2 ] = color;
+            m_colors[3 * i + 0] = color;
+            m_colors[3 * i + 1] = color;
+            m_colors[3 * i + 2] = color;
         }
     }
 

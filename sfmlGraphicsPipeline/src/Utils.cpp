@@ -71,7 +71,7 @@ void getIndexedUnitPlane(std::vector<glm::vec3>& positions, std::vector<glm::vec
     tcoords.resize(4);
     normals.resize(4, glm::vec3(0,0,1));
     indices.resize(2);
-    
+
     for (int i=0;i<2;++i){
         for(int j=0;j<2;++j){
             size_t index = 2 * i + j;
@@ -283,47 +283,65 @@ void getUnitCube(vector<glm::vec3>& positions, vector<glm::vec3>& normals, vecto
     tcoords.push_back(glm::vec2(1.0,1.0));
 }
 
-void getUnitCylinder(vector<glm::vec3> &positions, vector<glm::vec3> &normals, std::vector<glm::vec2> & tcoords, unsigned int slices, bool vertex_normals)
-{
-    size_t number_of_triangles = slices * 4; // four triangles per slice
-    size_t number_of_vertices = number_of_triangles * 3; // three vertices per triangle (unindexed version)
-    float angle_step = 2.0 * M_PI / double( slices );
+void getUnitCylinder(vector<glm::vec3> &positions, vector<glm::vec3> &normals,
+                     std::vector<glm::vec2> &tcoords, unsigned int slices,
+                     bool vertex_normals) {
+    const size_t number_of_triangles = slices * 4; // four triangles per slice
+    // three vertices per triangle (unindexed version)
+    const size_t number_of_vertices = number_of_triangles * 3;
+    const float angleStep = 2.0 * M_PI / double(slices);
 
-    positions.resize(number_of_vertices, glm::vec3(0.0,0.0,0.0));
-    normals.resize(number_of_vertices, glm::vec3(0.0,0.0,0.0));
-    tcoords.resize(number_of_vertices, glm::vec2(0));
+    positions.resize(number_of_vertices, glm::vec3(0.0f, 0.0f, 0.0f));
+    normals.resize(number_of_vertices, glm::vec3(0.0f, 0.0f, 0.0f));
+    tcoords.resize(number_of_vertices, glm::vec2(0.0f));
 
-    float previous_angle = (slices - 1) * angle_step;
-    float angle = 0;
-    float previous_sin; // = ???
-    float previous_cos; // = ???
-    float sin; // = ???
-    float cos; // = ???
+    const float topY = 0.5f;
+    const float bottomY = -0.5f;
 
+    const glm::vec3 centerTop = glm::vec3(0.0f, topY, 0.0f);
+    const glm::vec3 centerBottom = glm::vec3(0.0f, bottomY, 0.0f);
 
-    for( size_t i = 0; i < slices; ++ i)
-    {
-        size_t voffset = 12 * i; // 4 x 3 = 12 vertices per slice
+    for(size_t i = 0; i < slices; ++i) {
+        const size_t voffset = 12 * i; // 4 x 3 = 12 vertices per slice
+
+        const float previousAngle = i * angleStep;
+        const float angle = (i + 1) * angleStep;
+        const float previousAngleSin = -sinf(previousAngle);
+        const float previousAngleCos = cosf(previousAngle);
+        const float angleSin = -sinf(angle);
+        const float angleCos = cosf(angle);
 
         // Positions
+        const glm::vec3 top = glm::vec3(angleCos, topY, angleSin);
+        const glm::vec3 previousTop = glm::vec3(
+            previousAngleCos,
+            topY,
+            previousAngleSin
+        );
+        const glm::vec3 previousBottom = glm::vec3(
+            previousAngleCos,
+            bottomY,
+            previousAngleSin
+        );
+        const glm::vec3 bottom = glm::vec3(angleCos, bottomY, angleSin);
 
-        // top triangle
-        // positions[ voffset +  0 ] = ???
-        // positions[ voffset +  1 ] = ???
-        // positions[ voffset +  2 ] = ???
+        // Top triangle
+        positions[voffset + 0] = centerTop;
+        positions[voffset + 1] = previousTop;
+        positions[voffset + 2] = top;
 
-        // side triangles
-        // positions[ voffset +  3 ] = ???
-        // positions[ voffset +  4 ] = ???
-        // positions[ voffset +  5 ] = ???
-        // positions[ voffset +  6 ] = ???
-        // positions[ voffset +  7 ] = ???
-        // positions[ voffset +  8 ] = ???
+        // Side triangles
+        positions[voffset +  3] = previousBottom;
+        positions[voffset +  4] = top;
+        positions[voffset +  5] = previousTop;
+        positions[voffset +  6] = previousBottom;
+        positions[voffset +  7] = bottom;
+        positions[voffset +  8] = top;
 
-        // bottom triangle
-        // positions[ voffset +  9 ] = ???
-        // positions[ voffset + 10 ] = ???
-        // positions[ voffset + 11 ] = ???
+        // Bottom triangle
+        positions[voffset + 9] = centerBottom;
+        positions[voffset + 10] = bottom;
+        positions[voffset + 11] = previousBottom;
 
         // Normals
 
@@ -356,14 +374,14 @@ void getUnitCylinder(vector<glm::vec3> &positions, vector<glm::vec3> &normals, s
         // normals[ voffset + 11 ] = ???
 
         // Texture coordinates (don't modify, might be used later)
-        
-        float current_u = i /(float)slices; 
-        float next_u = (i+1) /(float)slices; 
+
+        float current_u = i /(float)slices;
+        float next_u = (i+1) /(float)slices;
 
         // top triangle
         tcoords[voffset + 0] = glm::vec2(current_u, 0);
         tcoords[voffset + 1] = glm::vec2(current_u, 0.33);
-        tcoords[voffset + 2] = glm::vec2(next_u,0.33);
+        tcoords[voffset + 2] = glm::vec2(next_u, 0.33);
 
         // side triangles
         tcoords[voffset + 3] = glm::vec2(next_u, 0.33);
@@ -462,7 +480,7 @@ void getUnitSphere(vector<glm::vec3>& positions, vector<glm::vec3>& normals, vec
             glm::vec3 next_theta_normal = glm::vec3(cos_next_theta*sin_phi, sin_next_theta*sin_phi, cos_phi);
             glm::vec3 next_phi_normal = glm::vec3(cos_theta*sin_next_phi, sin_theta*sin_next_phi, cos_next_phi);
             glm::vec3 next_both_normal = glm::vec3(cos_next_theta*sin_next_phi, sin_next_theta*sin_next_phi, cos_next_phi);
-            
+
             size_t step =  i * strips + j;
 
             positions[6 * step + 0] = center + radius * current_normal;
@@ -493,7 +511,7 @@ void getUnitSphere(vector<glm::vec3>& positions, vector<glm::vec3>& normals, vec
                 if(glm::dot(t1_normal, t1_mean_normal) < 0)
                     t1_normal *= -1;
                 if(glm::dot(t2_normal, t2_mean_normal) < 0)
-                    t2_normal *= -1;   
+                    t2_normal *= -1;
                 for (size_t k=0; k<=5; ++k)
                     normals[6 * step + k] = k <= 2 ? t1_normal : t2_normal;
             }else{
@@ -539,7 +557,7 @@ void getUnitIndexedSphere(vector<glm::vec3>& positions, vector<glm::vec3>& norma
         phi=phi_step, theta+=theta_step)
     {
         size_t next_i = (i + 1) % slices;
-        for(int j=0; j<reduced_strips; ++j, 
+        for(int j=0; j<reduced_strips; ++j,
             phi+=phi_step)
         {
             size_t vindex = i * reduced_strips + j + 2;
@@ -549,12 +567,12 @@ void getUnitIndexedSphere(vector<glm::vec3>& positions, vector<glm::vec3>& norma
             size_t vindex_side = i * reduced_strips + delta_j + 2;
             glm::vec3 normal = glm::vec3(cos(theta)*sin(phi), sin(theta)*sin(phi), cos(phi));
             positions[vindex] = radius * normal;
-            normals[vindex] = normal;   
+            normals[vindex] = normal;
             if (j < reduced_strips - 1){
                 indices[2 * (i * reduced_strips + j) + 0] = glm::uvec3(vindex, vindex_next, vindex_side);
                 indices[2 * (i * reduced_strips + j) + 1] = glm::uvec3(vindex_next, vindex_next_side, vindex_side);
             }
-          
+
         }
         size_t first_vindex = i * reduced_strips + 2;
         size_t last_vindex = first_vindex + reduced_strips - 1;
@@ -617,7 +635,7 @@ void getUnitCone(vector<glm::vec3>& positions, vector<glm::vec3>& normals, std::
             normals[ voffset +  1 ] = normal1;
             normals[ voffset +  2 ] = normal2;
         }else{
-            glm::vec3 contour_edge = p2 - p1; 
+            glm::vec3 contour_edge = p2 - p1;
             glm::vec3 depth_edge = tip - p1;
             glm::vec3 side_normal = glm::cross(glm::normalize(contour_edge), glm::normalize(depth_edge));
 
@@ -629,9 +647,9 @@ void getUnitCone(vector<glm::vec3>& positions, vector<glm::vec3>& normals, std::
             normals[ voffset +  2 ] = side_normal;
         }
 
-        normals[ voffset +  3 ] = glm::vec3{0,0,-1}; 
-        normals[ voffset +  4 ] = glm::vec3{0,0,-1}; 
-        normals[ voffset +  5 ] = glm::vec3{0,0,-1}; 
+        normals[ voffset +  3 ] = glm::vec3{0,0,-1};
+        normals[ voffset +  4 ] = glm::vec3{0,0,-1};
+        normals[ voffset +  5 ] = glm::vec3{0,0,-1};
 
         float u = (i+1) / (float)slices;
         float previous_u = i / (float)slices;
