@@ -13,8 +13,9 @@ MeshRenderable::MeshRenderable(ShaderProgramPtr program,
     KeyframedHierarchicalRenderable(program),
     m_pBuffer(0), m_cBuffer(0), m_nBuffer(0), m_iBuffer(0), m_mode(GL_TRIANGLES), m_indexed(true)
 {
-    // TODO: 
-    // use read_obj from Io.hpp to populate m_positions, m_indices, m_normals and m_tcoords
+    read_obj(mesh_filename, m_positions, m_indices,
+             m_normals, m_tcoords);
+
     set_random_colors();
     gen_buffers();
     update_buffers();
@@ -22,7 +23,7 @@ MeshRenderable::MeshRenderable(ShaderProgramPtr program,
 
 MeshRenderable::MeshRenderable(ShaderProgramPtr program,
                                const std::vector< glm::vec3 > & positions,
-                               const std::vector< unsigned int > & indices, 
+                               const std::vector< unsigned int > & indices,
                                const std::vector< glm::vec3 > & normals,
                                const std::vector< glm::vec4 > & colors) :
     KeyframedHierarchicalRenderable(program),
@@ -95,7 +96,7 @@ void MeshRenderable::update_indices_buffer(){
 
 void MeshRenderable::do_draw()
 {
-    
+
     int positionLocation = m_shaderProgram->getAttributeLocation("vPosition");
     int colorLocation = m_shaderProgram->getAttributeLocation("vColor");
     int normalLocation = m_shaderProgram->getAttributeLocation("vNormal");
@@ -195,7 +196,7 @@ MeshRenderable::MeshRenderable(ShaderProgramPtr program,
 
 MeshRenderable::MeshRenderable(ShaderProgramPtr program,
                                const std::vector< glm::vec3 > & positions,
-                               const std::vector< unsigned int > & indices, 
+                               const std::vector< unsigned int > & indices,
                                const std::vector< glm::vec3 > & normals,
                                const std::vector< glm::vec4 > & colors) :
     KeyframedHierarchicalRenderable(program),
@@ -268,7 +269,7 @@ void MeshRenderable::update_indices_buffer(){
 
 void MeshRenderable::do_draw()
 {
-    
+
     int positionLocation = m_shaderProgram->getAttributeLocation("vPosition");
     int colorLocation = m_shaderProgram->getAttributeLocation("vColor");
     int normalLocation = m_shaderProgram->getAttributeLocation("vNormal");
