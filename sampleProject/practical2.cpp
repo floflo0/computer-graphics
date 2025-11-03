@@ -44,6 +44,13 @@ void initialize_scene(Viewer &viewer) {
                             getRotationMatrix(M_PI, {0.0f, 1.0f, 0.0f}));
     // Add suzanne to the viewer
     viewer.addRenderable(suzanne);
+
+    // Create bowser
+    const std::string bowser_path = "../../sfmlGraphicsPipeline/meshes/bowser_fixed.obj";
+    MeshRenderablePtr bowser = std::make_shared<MeshRenderable>(flatShader, bowser_path);
+    bowser->setModelMatrix(getTranslationMatrix(0.0f, 0.0f, 10.0f));
+    // Add bowser to the viewer
+    viewer.addRenderable(bowser);
 }
 
 int main() {
