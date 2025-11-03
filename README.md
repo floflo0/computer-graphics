@@ -1,6 +1,6 @@
 ## Travaux Pratiques d'Informatique Graphique
 
-Bienvenue sur le répertoire des TPs d'informatique graphique.  
+Bienvenue sur le répertoire des TPs d'informatique graphique.
 
 Les sujets de TP (pdf) se trouvent dans `sujets`. Une aide à l'installation sur est disponible dans `sujets/install.pdf`. Elle est plus détaillée pour l'installation sur Windows, mais aborde aussi l'installation sur une plateforme Unix (en revanche, pas sur MacOS).
 
@@ -25,7 +25,7 @@ Ce cours d'informatique graphique permet d'apprendre les bases de la réalisatio
 
 L'objectif du projet est de réaliser un film d'animation sur une expédition au pôle nord, avec un bateau comme élément/personnage principal.
 Votre film devra comporter au moins une application de chaque notion vue en cours/TP :
-- Animation (par exemple avec une grue, un bras robotique, une hélice, une parabole etc) 
+- Animation (par exemple avec une grue, un bras robotique, une hélice, une parabole etc)
 - Simulation physique (par exemple avec une voile, un drapeau, des câbles, un filet de pêche, une force de flottaison etc)
 - Différentes sources de lumières, des textures et des matériaux adéquats (soleil/lune, spots lumineux, eau, neige, glace, métal etc)
 
@@ -41,10 +41,14 @@ Les documents attendus sont détaillés dans le lien du rendu du projet.
 
 ### Contenu du Cours
 
-Modélisation : structure de données pour la représentation de scènes 2D et 3D (maillage, courbes et surfaces)  
-Rendu : construction d'images 2D à partir de modèles 2D ou 3D, méthodes de rendu projectif, illumination et textures  
-Animation : simulation dynamique des objets en 3D, animation procédurale et introduction aux modèles physiques  
+Modélisation : structure de données pour la représentation de scènes 2D et 3D (maillage, courbes et surfaces)
+Rendu : construction d'images 2D à partir de modèles 2D ou 3D, méthodes de rendu projectif, illumination et textures
+Animation : simulation dynamique des objets en 3D, animation procédurale et introduction aux modèles physiques
 
 ### Intervenants
 - Maud Marchal (Cours), Maud.Marchal@insa-rennes.fr
 - Glenn Kerbiriou (TP), Glenn.Kerbiriou@insa-rennes.fr
+
+## Credits
+
+- Bowser model: <https://models.spriters-resource.com/ds_dsi/nintendogs/asset/291397/>
