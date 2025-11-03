@@ -3,11 +3,10 @@
 #include "./../include/Viewer.hpp"
 #include <glm/gtc/type_ptr.hpp>
 #include <GL/glew.h>
-#include <iostream>
 
 HierarchicalRenderable::~HierarchicalRenderable(){}
 
-HierarchicalRenderable::HierarchicalRenderable(ShaderProgramPtr shaderProgram) : 
+HierarchicalRenderable::HierarchicalRenderable(ShaderProgramPtr shaderProgram) :
     Renderable(shaderProgram), m_parent( nullptr ),
     m_globalTransform( glm::mat4(1.0) ), m_localTransform( glm::mat4(1.0) )
 {}
@@ -23,9 +22,8 @@ void HierarchicalRenderable::setGlobalTransform( const glm::mat4& globalTransfor
     m_globalTransform = globalTransform;
 }
 
-void HierarchicalRenderable::updateModelMatrix()
-{
-    //TODO: Get absolute model matrix
+void HierarchicalRenderable::updateModelMatrix() {
+    this->setModelMatrix(this->computeTotalGlobalTransform() * this->m_localTransform);
 }
 
 const glm::mat4& HierarchicalRenderable::getLocalTransform() const
@@ -38,17 +36,11 @@ void HierarchicalRenderable::setLocalTransform(const glm::mat4& localTransform)
     m_localTransform = localTransform;
 }
 
-glm::mat4 HierarchicalRenderable::computeTotalGlobalTransform() const
-{
-    if( m_parent )
-    {
-        //TODO: Get recursive global transformation
+glm::mat4 HierarchicalRenderable::computeTotalGlobalTransform() const {
+    if (m_parent) {
+        return m_parent->computeTotalGlobalTransform() * this->m_globalTransform ;
     }
-    else
-    {
-        //TODO: Get recursive global transformation
-    }
-    return glm::mat4();
+    return this->m_globalTransform;
 }
 
 void HierarchicalRenderable::beforeDraw()
