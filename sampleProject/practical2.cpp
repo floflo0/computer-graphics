@@ -25,14 +25,14 @@ void initialize_scene(Viewer &viewer) {
 
     const std::string cat_path = "../../sfmlGraphicsPipeline/meshes/cat.obj";
     MeshRenderablePtr cat = std::make_shared<MeshRenderable>(flatShader, cat_path);
-    cat->setModelMatrix(getTranslationMatrix(-5.0f, 0.0f, 0.0f) *
+    cat->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, 0.0f) *
                         getRotationMatrix(M_PI, {0.0f, 1.0f, 0.0f}));
     // Add cat to the viewer
     viewer.addRenderable(cat);
 
     const std::string pillar_path = "../../sfmlGraphicsPipeline/meshes/pillar.obj";
     MeshRenderablePtr pillar = std::make_shared<MeshRenderable>(flatShader, pillar_path);
-    pillar->setModelMatrix(getTranslationMatrix(-5.0f, -3.2f, 0.5f) *
+    pillar->setGlobalTransform(getTranslationMatrix(-5.0f, -3.2f, 0.5f) *
                            getRotationMatrix(M_PI_2, {0.0f, 0.0f, 1.0f}));
     // Add pillar to the viewer
     viewer.addRenderable(pillar);
@@ -40,17 +40,10 @@ void initialize_scene(Viewer &viewer) {
     // Create suzanne
     const std::string suzanne_path = "../../sfmlGraphicsPipeline/meshes/suzanne.obj";
     MeshRenderablePtr suzanne = std::make_shared<MeshRenderable>(flatShader, suzanne_path);
-    suzanne->setModelMatrix(getTranslationMatrix(5.0f, 0.0f, 0.0f) *
+    suzanne->setGlobalTransform(getTranslationMatrix(5.0f, 0.0f, 0.0f) *
                             getRotationMatrix(M_PI, {0.0f, 1.0f, 0.0f}));
     // Add suzanne to the viewer
     viewer.addRenderable(suzanne);
-
-    // Create bowser
-    const std::string bowser_path = "../../sfmlGraphicsPipeline/meshes/bowser_fixed.obj";
-    MeshRenderablePtr bowser = std::make_shared<MeshRenderable>(flatShader, bowser_path);
-    bowser->setModelMatrix(getTranslationMatrix(0.0f, 0.0f, 10.0f));
-    // Add bowser to the viewer
-    viewer.addRenderable(bowser);
 }
 
 int main() {
