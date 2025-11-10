@@ -52,3 +52,13 @@ Animation : simulation dynamique des objets en 3D, animation procédurale et int
 ## Credits
 
 - Bowser model: <https://models.spriters-resource.com/ds_dsi/nintendogs/asset/291397/>
+
+#### SNES Rainbow Road (with resemblance to MK8 Retro Course)
+
+[SNES Rainbow Road (with resemblance to MK8 Retro Course)](https://www.thingiverse.com/thing:606403)
+by [dougwinning99](https://www.thingiverse.com/dougwinning99/designs)
+licensed under the
+[Creative Commons - Attribution - Share](https://creativecommons.org/licenses/by-sa/3.0/)
+Alike license.
+
+Modified to `.obj format`.
