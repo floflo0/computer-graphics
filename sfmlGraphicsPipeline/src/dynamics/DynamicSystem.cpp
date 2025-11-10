@@ -103,6 +103,7 @@ void DynamicSystem::detectCollisions()
         {
             if(testParticlePlane(p, o))
             {
+                //std::cout << "Detected something" << std::endl ;
                 ParticlePlaneCollisionPtr c = std::make_shared<ParticlePlaneCollision>(p,o,m_restitution);
                 m_collisions.push_back(c);
             }

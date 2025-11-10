@@ -48,10 +48,10 @@ void initialize_scene( Viewer& viewer )
     //Populate the dynamic system with particles, forcefields and create renderables associated to them for visualization.
     //Uncomment only one of the following line
 
-    particles(viewer, system, systemRenderable);
+    //particles(viewer, system, systemRenderable);
     //springs(viewer, system, systemRenderable);
     //collisions(viewer, system, systemRenderable);
-    //playPool(viewer, system, systemRenderable);
+    playPool(viewer, system, systemRenderable); // Does not work correctly :(
 
     //Finally activate animation
     viewer.startAnimation();
@@ -60,7 +60,7 @@ void initialize_scene( Viewer& viewer )
 
 int main() 
 {
-    glm::vec4 background_color(0.7,0.7,0.7,1);
+    glm::vec4 background_color(0.1,0.1,0.1,1);
 	Viewer viewer(1280,720,background_color);
 	initialize_scene(viewer);
 
@@ -203,7 +203,7 @@ void springs(Viewer& viewer, DynamicSystemPtr& system, DynamicSystemRenderablePt
     system->addForceField( gravityForceField );
 
     //Initialize a force field that apply to all the particles of the system to simulate vicosity (air friction)
-    float dampingCoefficient = 0.0;
+    float dampingCoefficient = 6.0;
     DampingForceFieldPtr dampingForceField = std::make_shared<DampingForceField>(system->getParticles(), dampingCoefficient);
     system->addForceField(dampingForceField);
 
@@ -229,7 +229,7 @@ void collisions(Viewer& viewer, DynamicSystemPtr& system, DynamicSystemRenderabl
     viewer.addShaderProgram( flatShader );
 
     //Activate collision detection
-    system->setCollisionsDetection(false);
+    system->setCollisionsDetection(true);
 
     //Initialize the restitution coefficient for collision
     //1.0 = full elastic response
@@ -306,12 +306,14 @@ void playPool(Viewer& viewer, DynamicSystemPtr& system, DynamicSystemRenderableP
     viewer.addShaderProgram( flatShader );
 
     //Initialize two particles with position, velocity, mass and radius and add it to the system
-    glm::vec3 px(0.0,0.0,0.0),pv(0.0,0.0,0.0);
+    glm::vec3 px(0.0,0.0,0.0),pv(0.0,0.0,5.0);
     float pm=1.0, pr=0.5;
-    px = glm::vec3(0.0,pr,0.0);
+    //px = glm::vec3(0.0,pr,0.0); // Why are we using pr, which should correspond to the size of the particle, as the y coordinate ? 
     ParticlePtr mobile = std::make_shared<Particle>( px, pv, pm, pr);
+    px = glm::vec3(0.0,0,0.0);
     system->addParticle( mobile );
-    px = glm::vec3(0.0,pr,5.0);
+    //px = glm::vec3(0.0,pr,0.0); // Same here ?
+    px = glm::vec3(0.0,5,5.0); 
     ParticlePtr other = std::make_shared<Particle>( px, pv, pm, pr);
     system->addParticle( other );
 
@@ -415,5 +417,5 @@ void playPool(Viewer& viewer, DynamicSystemPtr& system, DynamicSystemRenderableP
 
     //Activate collision and set the restitution coefficient to 1.0
     system->setCollisionsDetection(true);
-    system->setRestitution(1.0f);
+    system->setRestitution(0.8f); // Base value was 1 
 }
