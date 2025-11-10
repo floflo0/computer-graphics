@@ -61,4 +61,4 @@ licensed under the
 [Creative Commons - Attribution - Share](https://creativecommons.org/licenses/by-sa/3.0/)
 Alike license.
 
-Modified to `.obj format`.
+Modified to `.obj` format.
