@@ -2,9 +2,7 @@
 #include <glm/gtx/norm.hpp>
 
 ParticleParticleCollision::~ParticleParticleCollision()
-{
-
-}
+{}
 
 ParticleParticleCollision::ParticleParticleCollision(ParticlePtr particle1, ParticlePtr particle2, float restitution) :
     Collision(restitution)
@@ -15,6 +13,9 @@ ParticleParticleCollision::ParticleParticleCollision(ParticlePtr particle1, Part
 
 void ParticleParticleCollision::do_solveCollision()
 {
+    // This function is called whenever there is a collision between 2 particles 
+    //std::cout << "Solver called" << std::endl;
+    
     //Don't process fixed particles (Let's assume that the ground plane is fixed)
     if (m_p1->isFixed() && m_p2->isFixed()) return;
 
@@ -69,5 +70,5 @@ bool testParticleParticle(const ParticlePtr &p1, const ParticlePtr &p2)
     //Sum of sphere radii
     float r = p1->getRadius() + p2->getRadius();
     float c = glm::distance2(p1->getPosition(),p2->getPosition()) - r*r;
-    return (c<0.0f) ? true : false;
+    return (c<0.0f) ? true : false; // XD
 }
