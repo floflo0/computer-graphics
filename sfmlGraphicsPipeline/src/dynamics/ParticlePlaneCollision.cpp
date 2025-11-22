@@ -23,26 +23,23 @@ void ParticlePlaneCollision::do_solveCollision()
     //Plane::normal(): Return the normal of the plane
     //Particle::getRadius(), Particle::getPosition(), Particle::getVelocity(), Particle::setPosition(), Particle::setVelocity()
 
-    //Compute particle-plane distance 
+    //Compute particle-plane distance
     // distance = dot(P, n) + d
-    float particlePlaneDist = glm::dot(m_particle->getPosition(), m_plane->normal()) + m_plane->distanceToOrigin();
-
-    //Compute plane-particle vector
-    glm::vec3 normal = glm::normalize(m_plane->normal());
+    float particlePlaneDist = glm::dot(m_particle->getPosition(), m_plane->normal()) - m_plane->distanceToOrigin();
 
     // Compute post-collision velocity
     glm::vec3 velocity = m_particle->getVelocity();
 
     // Decompose the velocity into normal and tangential parts
-    float vN = glm::dot(velocity, normal);
-    glm::vec3 vNormal = vN * normal;
+    float vN = glm::dot(velocity, m_plane->normal());
+    glm::vec3 vNormal = vN * m_plane->normal();
     glm::vec3 vTangent = velocity - vNormal;
 
     // If the particle is moving toward the plane (vN < 0), reflect it
     if (vN < 0.0f)
     {
         // Place the particle right above the plane, so that it doesn't trigger another collision at the nexte frame
-        glm::vec3 correctedPos = m_particle->getPosition() + (m_particle->getRadius() - particlePlaneDist) * normal;
+        glm::vec3 correctedPos = m_particle->getPosition() + (m_particle->getRadius() - particlePlaneDist) * m_plane->normal();
         m_particle->setPosition(correctedPos);
 
         glm::vec3 newVelocity = vTangent - m_restitution * vNormal;
@@ -77,8 +74,8 @@ bool testParticlePlane(const ParticlePtr &particle, const PlanePtr &plane)
     //Plane::normal(): Return the normal of the plane
     //Particle::getRadius(), Particle::getPosition()
 
-    float particlePlaneDist = glm::dot(particle->getPosition(), plane->normal()) + plane->distanceToOrigin();
+    float particlePlaneDist = glm::dot(particle->getPosition(), plane->normal()) - plane->distanceToOrigin();
 
     // By doing this, the particle still clip a bit through the surface
-    return particlePlaneDist <= particle->getRadius() ;
+    return abs(particlePlaneDist) <= particle->getRadius() ;
 }
