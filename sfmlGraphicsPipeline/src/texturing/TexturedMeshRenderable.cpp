@@ -185,7 +185,7 @@ void TexturedMeshRenderable::updateTextureOption()
     {
         for(size_t i=0; i<m_tcoords.size(); ++i)
             m_tcoords[i] = factor*m_original_tcoords[i];
-        
+
         glcheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
         glcheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
     }
