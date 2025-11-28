@@ -51,7 +51,30 @@ Animation : simulation dynamique des objets en 3D, animation procédurale et int
 
 ## Credits
 
-- Bowser model: <https://models.spriters-resource.com/ds_dsi/nintendogs/asset/291397/>
+#### Bowser
+
+[Bowser (Mario Kart 8 Deluxe)](https://skfb.ly/pqwKD)
+by [Austin Zimmermann](https://sketchfab.com/AustinZimmermann)
+licensed under the 
+[Creative Commons - Attribution](https://creativecommons.org/licenses/by/4.0/)
+Modified and separate to `.obj` format.
+
+#### Lakitu
+
+[Mario Sports Mix Lakitu](https://skfb.ly/pCJCo)
+by [RedYoshiDedepants](https://sketchfab.com/jdedepants)
+licensed under the 
+[Creative Commons - Attribution](https://creativecommons.org/licenses/by/4.0/)
+Modified and separate to `.obj` format.
+
+#### road galleon
+
+[road galleon](https://sketchfab.com/3d-models/road-galleon-cc629003a2dd41a99b6d0197d2857950)
+by [amogusstrikesback2](https://sketchfab.com/amogusstrikesback2)
+is licensed under
+[Creative Commons - Attribution](http://creativecommons.org/licenses/by/4.0/).
+
+Modified to `.obj` format.
 
 #### SNES Rainbow Road (with resemblance to MK8 Retro Course)
 
