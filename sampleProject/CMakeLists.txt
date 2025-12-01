@@ -122,6 +122,20 @@ foreach( SOURCE_PATH IN LISTS SOURCE_PATHS)
 endforeach()
 
 
+file(GLOB FINAL_PROJECT_SOURCE_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/final_project/*.cpp" )
+add_executable(final_project ${FINAL_PROJECT_SOURCE_PATHS})
+target_link_libraries(final_project ${SFML_GRAPHICS_PIPELINE_LIBRARIES})
+target_link_libraries(final_project sfml-system)
+target_link_libraries(final_project sfml-window)
+target_link_libraries(final_project sfml-graphics)
+target_link_libraries(final_project GLEW::glew)
+target_link_libraries(final_project ${FREETYPE_LIBRARIES})
+target_link_libraries(final_project ${TINYOBJLOADER_LIBRARIES})
+if (OPENGL_FOUND)
+    target_link_libraries(final_project ${OPENGL_LIBRARIES})
+    target_link_libraries(final_project m)
+endif()
+
 # Windows executables struggles to the dlls so we copy them in the same directory
 if(WIN32)
     file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../sfmlGraphicsPipeline/extlib/SFML-2.5.1/build/lib/sfml-system-2.dll" DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/build")
