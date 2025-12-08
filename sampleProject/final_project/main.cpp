@@ -18,6 +18,7 @@
 #include <Utils.hpp>
 
 #include "bowser.hpp"
+#include "kart.hpp"
 
 void initialize_scene(Viewer &viewer) {
     //Position the camera
@@ -121,83 +122,8 @@ void initialize_scene(Viewer &viewer) {
 
     viewer.addRenderable(lakitu);
 
-
-
-    // Create Bowser's kart
-    const std::string car_path = "../../sfmlGraphicsPipeline/meshes/kart/car.obj";
-    const std::string canon_path = "../../sfmlGraphicsPipeline/meshes/kart/canon.obj";
-    const std::string chain_path = "../../sfmlGraphicsPipeline/meshes/kart/chain.obj";
-    const std::string eyes_path = "../../sfmlGraphicsPipeline/meshes/kart/eyes.obj";
-    const std::string volant_centre_path = "../../sfmlGraphicsPipeline/meshes/kart/volant_centre.obj";
-    const std::string volant_tour_path = "../../sfmlGraphicsPipeline/meshes/kart/volant_tour.obj";
-    const std::string volant_barre_path = "../../sfmlGraphicsPipeline/meshes/kart/volant_barre.obj";
-    const std::string gouvernaille_path = "../../sfmlGraphicsPipeline/meshes/kart/gouvernaille.obj";
-    const std::string cylinder_back_path = "../../sfmlGraphicsPipeline/meshes/kart/cylinder_back.obj";
-    const std::string cylinder_front_path = "../../sfmlGraphicsPipeline/meshes/kart/cylinder_front.obj";
-    const std::string head_back_path = "../../sfmlGraphicsPipeline/meshes/kart/head_back.obj";
-    const std::string hair_head_back_path = "../../sfmlGraphicsPipeline/meshes/kart/hair_head_back.obj";
-    const std::string head_front_path = "../../sfmlGraphicsPipeline/meshes/kart/head_front.obj";
-    const std::string tire_back_right_path = "../../sfmlGraphicsPipeline/meshes/kart/tire_back_right.obj";
-    const std::string tire_back_left_path = "../../sfmlGraphicsPipeline/meshes/kart/tire_back_left.obj";
-    const std::string tire_front_right_path = "../../sfmlGraphicsPipeline/meshes/kart/tire_front_right.obj";
-    const std::string tire_front_left_path = "../../sfmlGraphicsPipeline/meshes/kart/tire_front_left.obj";
-
-    auto car = std::make_shared<TexturedLightedMeshRenderable>(textureShader, car_path, myMaterial, "../../sfmlGraphicsPipeline/textures/kart/kart.png");
-    auto canon = std::make_shared<TexturedLightedMeshRenderable>(textureShader, canon_path, myMaterial, "../../sfmlGraphicsPipeline/textures/kart/kart.png");
-    auto chain = std::make_shared<TexturedLightedMeshRenderable>(textureShader, chain_path, myMaterial, "../../sfmlGraphicsPipeline/textures/kart/kart.png");
-    auto eyes = std::make_shared<TexturedLightedMeshRenderable>(textureShader, eyes_path, myMaterial, "../../sfmlGraphicsPipeline/textures/kart/eyes.png");
-    auto volant_centre = std::make_shared<TexturedLightedMeshRenderable>(textureShader, volant_centre_path, myMaterial, "../../sfmlGraphicsPipeline/textures/kart/kart.png");
-    auto volant_tour = std::make_shared<TexturedLightedMeshRenderable>(textureShader, volant_tour_path, myMaterial, "../../sfmlGraphicsPipeline/textures/kart/kart.png");
-    auto volant_barre = std::make_shared<TexturedLightedMeshRenderable>(textureShader, volant_barre_path, myMaterial, "../../sfmlGraphicsPipeline/textures/kart/kart.png");
-    auto gouvernaille = std::make_shared<TexturedLightedMeshRenderable>(textureShader, gouvernaille_path, myMaterial, "../../sfmlGraphicsPipeline/textures/kart/kart.png");
-    auto cylinder_back = std::make_shared<TexturedLightedMeshRenderable>(textureShader, cylinder_back_path, myMaterial, "../../sfmlGraphicsPipeline/textures/kart/kart.png");
-    auto cylinder_front = std::make_shared<TexturedLightedMeshRenderable>(textureShader, cylinder_front_path, myMaterial, "../../sfmlGraphicsPipeline/textures/kart/kart.png");
-    auto head_back = std::make_shared<TexturedLightedMeshRenderable>(textureShader, head_back_path, myMaterial, "../../sfmlGraphicsPipeline/textures/kart/kart.png");
-    auto hair_head_back = std::make_shared<TexturedLightedMeshRenderable>(textureShader, hair_head_back_path, myMaterial, "../../sfmlGraphicsPipeline/textures/kart/kart.png");
-    auto head_front = std::make_shared<TexturedLightedMeshRenderable>(textureShader, head_front_path, myMaterial, "../../sfmlGraphicsPipeline/textures/kart/kart.png");
-    auto tire_back_right = std::make_shared<TexturedLightedMeshRenderable>(textureShader, tire_back_right_path, myMaterial, "../../sfmlGraphicsPipeline/textures/kart/kart.png");
-    auto tire_back_left = std::make_shared<TexturedLightedMeshRenderable>(textureShader, tire_back_left_path, myMaterial, "../../sfmlGraphicsPipeline/textures/kart/kart.png");
-    auto tire_front_right = std::make_shared<TexturedLightedMeshRenderable>(textureShader, tire_front_right_path, myMaterial, "../../sfmlGraphicsPipeline/textures/kart/kart.png");
-    auto tire_front_left = std::make_shared<TexturedLightedMeshRenderable>(textureShader, tire_front_left_path, myMaterial, "../../sfmlGraphicsPipeline/textures/kart/kart.png");
-
-    glm::mat4 kart_mat = getTranslationMatrix(-2.0f, 0.0f, -2.0f) * getScaleMatrix(0.1f);
-    car->setGlobalTransform(kart_mat);
-    canon->setGlobalTransform(kart_mat);
-    chain->setGlobalTransform(kart_mat);
-    eyes->setGlobalTransform(kart_mat);
-    volant_centre->setGlobalTransform(kart_mat);
-    volant_tour->setGlobalTransform(kart_mat);
-    volant_barre->setGlobalTransform(kart_mat);
-    gouvernaille->setGlobalTransform(kart_mat);
-    cylinder_back->setGlobalTransform(kart_mat);
-    cylinder_front->setGlobalTransform(kart_mat);
-    head_back->setGlobalTransform(kart_mat);
-    hair_head_back->setGlobalTransform(kart_mat);
-    head_front->setGlobalTransform(kart_mat);
-    tire_back_right->setGlobalTransform(kart_mat);
-    tire_back_left->setGlobalTransform(kart_mat);
-    tire_front_right->setGlobalTransform(kart_mat);
-    tire_front_left->setGlobalTransform(kart_mat);
-
-    viewer.addRenderable(car);
-    viewer.addRenderable(canon);
-    viewer.addRenderable(chain);
-    viewer.addRenderable(eyes);
-    viewer.addRenderable(volant_centre);
-    viewer.addRenderable(volant_tour);
-    viewer.addRenderable(volant_barre);
-    viewer.addRenderable(gouvernaille);
-    viewer.addRenderable(cylinder_back);
-    viewer.addRenderable(cylinder_front);
-    viewer.addRenderable(head_back);
-    viewer.addRenderable(hair_head_back);
-    viewer.addRenderable(head_front);
-    viewer.addRenderable(tire_back_right);
-    viewer.addRenderable(tire_back_left);
-    viewer.addRenderable(tire_front_right);
-    viewer.addRenderable(tire_front_left);
-
-
+    KartPtr kart = std::make_shared<Kart>(textureShader, myMaterial, 0.05);
+    viewer.addRenderable(kart->getRenderable());
 
     // Create Rainbow Road
     const std::string rainbow_path = "../../sfmlGraphicsPipeline/meshes/rainbow_road.obj";

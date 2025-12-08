@@ -13,18 +13,6 @@ const std::string mesh_eyes_path = "../../sfmlGraphicsPipeline/meshes/bowser/bow
 const std::string main_texture = "../../sfmlGraphicsPipeline/textures/bowser/bowser_complet.png";
 const std::string eyes_texture = "../../sfmlGraphicsPipeline/textures/bowser/bowser_eyes.png";
 
-glm::quat qX(const float radians) {
-    return glm::angleAxis(radians, glm::vec3(1.0f, 0.0f,0.0f));
-}
-
-glm::quat qY(const float radians) {
-    return glm::angleAxis(radians, glm::vec3(0.0f, 1.0f,0.0f));
-}
-
-glm::quat qZ(const float radians) {
-    return glm::angleAxis(radians, glm::vec3(0.0f, 0.0f, 1.0f));
-}
-
 #define ADD_CHILD_MESH(part, texture) do {                               \
         this->part = std::make_shared<TexturedLightedMeshRenderable>(    \
             shader_program,                                              \

@@ -845,3 +845,15 @@ glm::mat4 lookAtUpModel(const glm::vec3 & position, const glm::vec3 & target)
 {
     return glm::inverse(lookAtUp(position, target));
 }
+
+glm::quat qX(const float radians) {
+    return glm::angleAxis(radians, glm::vec3(1.0f, 0.0f,0.0f));
+}
+
+glm::quat qY(const float radians) {
+    return glm::angleAxis(radians, glm::vec3(0.0f, 1.0f,0.0f));
+}
+
+glm::quat qZ(const float radians) {
+    return glm::angleAxis(radians, glm::vec3(0.0f, 0.0f, 1.0f));
+}
