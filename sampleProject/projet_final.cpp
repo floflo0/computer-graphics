@@ -134,14 +134,30 @@ void initialize_scene(Viewer &viewer) {
     auto bowser_tail = std::make_shared<TexturedLightedMeshRenderable>(textureShader, bowser_tail_path, myMaterial, "../../sfmlGraphicsPipeline/textures/bowser/bowser_complet.png");
     auto bowser_eyes = std::make_shared<TexturedLightedMeshRenderable>(textureShader, bowser_eyes_path, myMaterial, "../../sfmlGraphicsPipeline/textures/bowser/bowser_eyes.png");
 
+
+
     // bowser->setGlobalTransform(getTranslationMatrix(0.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
-    bowser_body->setGlobalTransform(getTranslationMatrix(0.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
-    bowser_arm_right->setGlobalTransform(getTranslationMatrix(3.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
-    bowser_arm_left->setGlobalTransform(getTranslationMatrix(3.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
-    bowser_leg_right->setGlobalTransform(getTranslationMatrix(0.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
-    bowser_leg_left->setGlobalTransform(getTranslationMatrix(0.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
-    bowser_tail->setGlobalTransform(getTranslationMatrix(0.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
-    bowser_eyes->setGlobalTransform(getTranslationMatrix(0.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
+    glm::mat4 bowser_mat = getTranslationMatrix(20.0f, 1.444f, -1.6f) * getScaleMatrix(0.04f) * getRotationMatrix(M_PI_2f, {0.0f, 1.0f, 0.0f});
+
+
+    bowser_body->setGlobalTransform(bowser_mat);
+    bowser_arm_right->setGlobalTransform(bowser_mat);
+    bowser_arm_left->setGlobalTransform(bowser_mat);
+    bowser_leg_right->setGlobalTransform(bowser_mat);
+    bowser_leg_left->setGlobalTransform(bowser_mat);
+    bowser_tail->setGlobalTransform(bowser_mat);
+    bowser_eyes->setGlobalTransform(bowser_mat);
+
+    /* Le centre de rotation du bras n'est pas bon
+    const glm::mat4 rotatededArm = glm::rotate(
+        bowser_arm_right->getGlobalTransform(), // Current transform
+        M_PI_2f,  // 45 degree
+        {1.0f, 0.0f, 0.0f}  // y axies
+    );
+
+    bowser_arm_right->setGlobalTransform(rotatededArm);
+    */
+
 
     // viewer.addRenderable(bowser);
     viewer.addRenderable(bowser_body);
@@ -154,12 +170,14 @@ void initialize_scene(Viewer &viewer) {
 
 
 
+
+
     // Create Lakitu
     const std::string lakitu_path = "../../sfmlGraphicsPipeline/meshes/lakitu.obj";
 
     auto lakitu = std::make_shared<TexturedLightedMeshRenderable>(textureShader, lakitu_path, myMaterial, "../../sfmlGraphicsPipeline/textures/lakitu.png");
 
-    lakitu->setGlobalTransform(getTranslationMatrix(0.35f, 2.0f, -1.0f) * getScaleMatrix(0.02f));
+    lakitu->setGlobalTransform(getTranslationMatrix(23.0f, 3.5f, 2.0f) * getScaleMatrix(0.02f) * getRotationMatrix(M_PI*120/180, {0.0f, -1.0f, 0.0f})); 
 
     viewer.addRenderable(lakitu);
 
@@ -202,7 +220,7 @@ void initialize_scene(Viewer &viewer) {
     auto tire_front_right = std::make_shared<TexturedLightedMeshRenderable>(textureShader, tire_front_right_path, myMaterial, "../../sfmlGraphicsPipeline/textures/kart/kart.png");
     auto tire_front_left = std::make_shared<TexturedLightedMeshRenderable>(textureShader, tire_front_left_path, myMaterial, "../../sfmlGraphicsPipeline/textures/kart/kart.png");
 
-    glm::mat4 kart_mat = getTranslationMatrix(-2.0f, 0.0f, -2.0f) * getScaleMatrix(0.1f);
+    glm::mat4 kart_mat = getTranslationMatrix(20.0f, 1.144f, -1.6f) * getScaleMatrix(0.04f) * getRotationMatrix(M_PI_2f, {0.0f, 1.0f, 0.0f});
     car->setGlobalTransform(kart_mat);
     canon->setGlobalTransform(kart_mat);
     chain->setGlobalTransform(kart_mat);
@@ -249,7 +267,7 @@ void initialize_scene(Viewer &viewer) {
         rainbow_path,
         rainbow_texture_path
     );
-    rainbow->setGlobalTransform(getScaleMatrix(0.2f));
+    rainbow->setGlobalTransform(getScaleMatrix(0.4f));
 
     viewer.addRenderable(rainbow);
 }
