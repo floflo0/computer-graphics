@@ -1,6 +1,5 @@
 # Blender 4.5.4 LTS
 # www.blender.org
-mtllib lakitu.mtl
 o Lakitu
 v 0.000007 58.935600 -39.387299
 v -3.302430 58.466003 -41.138599

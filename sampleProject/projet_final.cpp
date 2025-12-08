@@ -2,6 +2,7 @@
 #include <FrameRenderable.hpp>
 #include <MeshRenderable.hpp>
 #include <ShaderProgram.hpp>
+#include <cmath>
 #include <texturing/TexturedMeshRenderable.hpp>
 #include <Viewer.hpp>
 #include <lighting/LightedMeshRenderable.hpp>
@@ -181,6 +182,53 @@ void initialize_scene(Viewer &viewer) {
 
     viewer.addRenderable(lakitu);
 
+    // Create Bob-Omb
+    const std::string bobOmb_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/bob-omb.obj";
+
+    auto bobOmb = std::make_shared<TexturedLightedMeshRenderable>(textureShader, bobOmb_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/bob-omb.png");
+
+    bobOmb->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -5.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.1f));
+
+    viewer.addRenderable(bobOmb);
+
+    // Create green and red shells
+    const std::string shell_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/shell.obj";
+
+    auto green_shell = std::make_shared<TexturedLightedMeshRenderable>(textureShader, shell_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/green_shell.png");
+    auto red_shell = std::make_shared<TexturedLightedMeshRenderable>(textureShader, shell_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/red_shell.png");
+
+    green_shell->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -4.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getRotationMatrix(M_PI_2f, 0.0f, 0.0f, 1.0f) * getScaleMatrix(0.1f));
+    red_shell->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -6.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getRotationMatrix(M_PI_2f, 0.0f, 0.0f, 1.0f) * getScaleMatrix(0.1f));
+
+    viewer.addRenderable(green_shell);
+    viewer.addRenderable(red_shell);
+
+    // Create Lightning
+    const std::string lightning_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/lightning.obj";
+
+    auto lightning = std::make_shared<TexturedLightedMeshRenderable>(textureShader, lightning_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/lightning.png");
+
+    lightning->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -3.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
+
+    viewer.addRenderable(lightning);
+
+    // Create Mushroom
+    const std::string mushroom_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/mushroom.obj";
+
+    auto mushroom = std::make_shared<TexturedLightedMeshRenderable>(textureShader, mushroom_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/mushroom.png");
+
+    mushroom->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -7.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
+
+    viewer.addRenderable(mushroom);
+
+    // Create Penguin
+    const std::string penguin_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/penguin.obj";
+
+    auto penguin = std::make_shared<TexturedLightedMeshRenderable>(textureShader, penguin_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/penguin.png");
+
+    penguin->setGlobalTransform(getTranslationMatrix(-5.0f, -0.5f, -8.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
+
+    viewer.addRenderable(penguin);
 
 
     // Create Bowser's kart
