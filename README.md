@@ -78,6 +78,96 @@ is licensed under
 
 Modified to `.obj` format.
 
+#### Bob-Omb
+
+[Bob-Omb](https://skfb.ly/pvNxH)
+by [jkimme1694](https://sketchfab.com/jkimmel694)
+is licensed under
+[Creative Commons - Attribution](http://creativecommons.org/licenses/by/4.0/).
+
+Modified to `.obj` format.
+
+#### Green Red Shell
+
+[Green Red Shell](https://skfb.ly/ptSIV)
+by [Polygonal_64](https://sketchfab.com/LegoshiFan)
+is licensed under
+[Creative Commons - Attribution](http://creativecommons.org/licenses/by/4.0/).
+
+Modified to `.obj` format.
+
+#### Lightning
+
+[Lightning](https://skfb.ly/pvNxS)
+by [jkimme1694](https://sketchfab.com/jkimmel694)
+is licensed under
+[Creative Commons - Attribution](http://creativecommons.org/licenses/by/4.0/).
+
+Modified to `.obj` format.
+
+#### Mushroom
+
+[Mushroom](https://skfb.ly/pw6sC)
+by [jkimme1694](https://sketchfab.com/jkimmel694)
+is licensed under
+[Creative Commons - Attribution](http://creativecommons.org/licenses/by/4.0/).
+
+Modified to `.obj` format.
+
+#### Penguin
+
+[Penguin](https://skfb.ly/pwpN8)
+by [jkimme1694](https://sketchfab.com/jkimmel694)
+is licensed under
+[Creative Commons - Attribution](http://creativecommons.org/licenses/by/4.0/).
+
+Modified to `.obj` format.
+
+#### Pianta
+
+[Pianta](https://skfb.ly/pBwyp)
+by [Polygonal_64](https://sketchfab.com/LegoshiFan)
+is licensed under
+[Creative Commons - Attribution](http://creativecommons.org/licenses/by/4.0/).
+
+Modified to `.obj` format.
+
+#### Blue Shell
+
+[Blue Shell](https://skfb.ly/ptSHW)
+by [Polygonal_64](https://sketchfab.com/LegoshiFan)
+is licensed under
+[Creative Commons - Attribution](http://creativecommons.org/licenses/by/4.0/).
+
+Modified to `.obj` format.
+
+#### Star
+
+[Star](https://skfb.ly/pw6sp)
+by [jkimme1694](https://sketchfab.com/jkimmel694)
+is licensed under
+[Creative Commons - Attribution](http://creativecommons.org/licenses/by/4.0/).
+
+Modified to `.obj` format.
+
+#### Thwomp
+
+[Thwomp](https://skfb.ly/pso8C)
+by [Polygonal_64](https://sketchfab.com/LegoshiFan)
+is licensed under
+[Creative Commons - Attribution](http://creativecommons.org/licenses/by/4.0/).
+
+Modified to `.obj` format.
+
+#### Star Trophy
+
+[Star Trophy](https://skfb.ly/p8oq6)
+by [Polygonal_64](https://sketchfab.com/LegoshiFan)
+is licensed under
+[Creative Commons - Attribution](http://creativecommons.org/licenses/by/4.0/).
+
+Modified to `.obj` format.
+
 #### SNES Rainbow Road (with resemblance to MK8 Retro Course)
 
 [SNES Rainbow Road (with resemblance to MK8 Retro Course)](https://www.thingiverse.com/thing:606403)
