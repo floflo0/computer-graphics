@@ -282,11 +282,17 @@ void initialize_scene(Viewer &viewer) {
     // Create Thwomp
     const std::string thwomp_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/thwomp.obj";
 
-    auto thwomp = std::make_shared<TexturedLightedMeshRenderable>(textureShader, thwomp_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/thwomp.png");
+    auto thwomp1 = std::make_shared<TexturedLightedMeshRenderable>(textureShader, thwomp_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/thwomp1.png");
+    auto thwomp2 = std::make_shared<TexturedLightedMeshRenderable>(textureShader, thwomp_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/thwomp2.png");
+    auto thwomp3 = std::make_shared<TexturedLightedMeshRenderable>(textureShader, thwomp_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/thwomp3.png");
 
-    thwomp->setGlobalTransform(getTranslationMatrix(-5.0f, -0.5f, 1.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.01f));
+    thwomp1->setGlobalTransform(getTranslationMatrix(-5.0f, 5.0f, 1.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.01f));
+    thwomp2->setGlobalTransform(getTranslationMatrix(-5.0f, 2.5f, 1.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.01f));
+    thwomp3->setGlobalTransform(getTranslationMatrix(-5.0f, -0.5f, 1.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.01f));
 
-    viewer.addRenderable(thwomp);
+    viewer.addRenderable(thwomp1);
+    viewer.addRenderable(thwomp2);
+    viewer.addRenderable(thwomp3);
 
     // Create Bowser's kart
     const std::string car_path = "../../sfmlGraphicsPipeline/meshes/kart/car.obj";
