@@ -8,7 +8,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-// This class could be made using multiple inheritance 
+// This class could be made using multiple inheritance
 // (derived from LightedMeshRenderable AND TextureMeshRenderable).
 // We will not do that since MeshRenderable::do_draw() would be called two times.
 // Inheritance is not the prefered method for designing a 3D engine anyway.
@@ -18,12 +18,12 @@ class TexturedLightedMeshRenderable : public TexturedMeshRenderable
 {
     public:
         ~TexturedLightedMeshRenderable();
-            
+
         TexturedLightedMeshRenderable(ShaderProgramPtr program,
                                       const std::string & mesh_filename,
                                       const MaterialPtr & material,
                                       const std::string & texture_filename);
-        
+
         TexturedLightedMeshRenderable(ShaderProgramPtr shaderProgram,
                                       const std::vector< glm::vec3 > & positions,
                                       const std::vector< unsigned int > & indices,
@@ -41,7 +41,7 @@ class TexturedLightedMeshRenderable : public TexturedMeshRenderable
                                       const sf::Image & image,
                                       const std::vector< glm::vec2 > & tcoords);
 
-    
+
         const MaterialPtr & getMaterial() const;
         void setMaterial(const MaterialPtr &);
 
