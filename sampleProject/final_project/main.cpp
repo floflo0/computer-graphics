@@ -122,6 +122,118 @@ void initialize_scene(Viewer &viewer) {
 
     viewer.addRenderable(lakitu);
 
+    // Create Bob-Omb
+    const std::string bobOmb_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/bob-omb.obj";
+
+    auto bobOmb = std::make_shared<TexturedLightedMeshRenderable>(textureShader, bobOmb_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/bob-omb.png");
+
+    bobOmb->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -5.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.1f));
+
+    viewer.addRenderable(bobOmb);
+
+    // Create green and red shells
+    const std::string shell_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/shell.obj";
+
+    auto green_shell = std::make_shared<TexturedLightedMeshRenderable>(textureShader, shell_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/green_shell.png");
+    auto red_shell = std::make_shared<TexturedLightedMeshRenderable>(textureShader, shell_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/red_shell.png");
+
+    green_shell->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -4.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getRotationMatrix(M_PI_2f, 0.0f, 0.0f, 1.0f) * getScaleMatrix(0.1f));
+    red_shell->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -6.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getRotationMatrix(M_PI_2f, 0.0f, 0.0f, 1.0f) * getScaleMatrix(0.1f));
+
+    viewer.addRenderable(green_shell);
+    viewer.addRenderable(red_shell);
+
+    // Create Lightning
+    const std::string lightning_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/lightning.obj";
+
+    auto lightning = std::make_shared<TexturedLightedMeshRenderable>(textureShader, lightning_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/lightning.png");
+
+    lightning->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -3.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
+
+    viewer.addRenderable(lightning);
+
+    // Create Mushroom
+    const std::string mushroom_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/mushroom.obj";
+
+    auto mushroom = std::make_shared<TexturedLightedMeshRenderable>(textureShader, mushroom_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/mushroom.png");
+
+    mushroom->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -7.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
+
+    viewer.addRenderable(mushroom);
+
+    // Create Penguin
+    const std::string penguin_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/penguin.obj";
+
+    auto penguin = std::make_shared<TexturedLightedMeshRenderable>(textureShader, penguin_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/penguin.png");
+
+    penguin->setGlobalTransform(getTranslationMatrix(-5.0f, -0.5f, -8.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
+
+    viewer.addRenderable(penguin);
+
+    // Create Pianta
+    const std::string pianta_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/pianta.obj";
+
+    auto pianta = std::make_shared<TexturedLightedMeshRenderable>(textureShader, pianta_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/pianta.png");
+
+    pianta->setGlobalTransform(getTranslationMatrix(-4.5f, 0.0f, -10.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.1f));
+
+    viewer.addRenderable(pianta);
+
+
+    // Create Blue Shell
+    const std::string blueShell_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/blue-shell.obj";
+
+    auto blueShell = std::make_shared<TexturedLightedMeshRenderable>(textureShader, blueShell_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/blue-shell.png");
+
+    blueShell->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -2.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
+
+    viewer.addRenderable(blueShell);
+
+    // Create Star Trophy
+    const std::string stars_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/trophy/stars.obj";
+    const std::string matMetal_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/trophy/matMetal.obj";
+    const std::string metal_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/trophy/metal.obj";
+    const std::string woodPanel_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/trophy/woodPanel.obj";
+
+    auto stars = std::make_shared<TexturedLightedMeshRenderable>(textureShader, stars_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/trophy/stars.png");
+    auto matMetal = std::make_shared<TexturedLightedMeshRenderable>(textureShader, matMetal_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/trophy/matMetal.png");
+    auto metal = std::make_shared<TexturedLightedMeshRenderable>(textureShader, metal_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/trophy/metal.png");
+    auto woodPanel = std::make_shared<TexturedLightedMeshRenderable>(textureShader, woodPanel_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/trophy/woodPanel.png");
+
+    stars->setGlobalTransform(getTranslationMatrix(-5.0f, -0.5f, -1.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.8f));
+    matMetal->setGlobalTransform(getTranslationMatrix(-5.0f, -0.5f, -1.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.8f));
+    metal->setGlobalTransform(getTranslationMatrix(-5.0f, -0.5f, -1.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.8f));
+    woodPanel->setGlobalTransform(getTranslationMatrix(-5.0f, -0.5f, -1.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.8f));
+
+    viewer.addRenderable(stars);
+    viewer.addRenderable(matMetal);
+    viewer.addRenderable(metal);
+    viewer.addRenderable(woodPanel);
+
+    // Create Star
+    const std::string star_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/star.obj";
+
+    auto star = std::make_shared<TexturedLightedMeshRenderable>(textureShader, star_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/star.png");
+
+    star->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, 0.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.2f));
+
+    viewer.addRenderable(star);
+
+    // Create Thwomp
+    const std::string thwomp_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/thwomp.obj";
+
+    auto thwomp1 = std::make_shared<TexturedLightedMeshRenderable>(textureShader, thwomp_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/thwomp1.png");
+    auto thwomp2 = std::make_shared<TexturedLightedMeshRenderable>(textureShader, thwomp_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/thwomp2.png");
+    auto thwomp3 = std::make_shared<TexturedLightedMeshRenderable>(textureShader, thwomp_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/thwomp3.png");
+
+    thwomp1->setGlobalTransform(getTranslationMatrix(-5.0f, 5.0f, 1.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.01f));
+    thwomp2->setGlobalTransform(getTranslationMatrix(-5.0f, 2.5f, 1.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.01f));
+    thwomp3->setGlobalTransform(getTranslationMatrix(-5.0f, -0.5f, 1.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.01f));
+
+    viewer.addRenderable(thwomp1);
+    viewer.addRenderable(thwomp2);
+    viewer.addRenderable(thwomp3);
+
     KartPtr kart = std::make_shared<Kart>(textureShader, myMaterial, 0.05);
     viewer.addRenderable(kart->getRenderable());
 
@@ -133,7 +245,7 @@ void initialize_scene(Viewer &viewer) {
         rainbow_path,
         rainbow_texture_path
     );
-    rainbow->setGlobalTransform(getScaleMatrix(0.2f));
+    rainbow->setGlobalTransform(getScaleMatrix(0.4f));
 
     viewer.addRenderable(rainbow);
 }
