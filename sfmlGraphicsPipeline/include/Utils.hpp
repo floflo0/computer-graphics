@@ -181,4 +181,10 @@ std::vector<T> arange(T start, T stop, T step = 1) {
     return values;
 }
 
+glm::quat qX(const float radians);
+
+glm::quat qY(const float radians);
+
+glm::quat qZ(const float radians);
+
 #endif //UTILS
