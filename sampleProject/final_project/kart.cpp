@@ -41,7 +41,7 @@ Kart::Kart(ShaderProgramPtr shader_program, const MaterialPtr &material,
         material,
         main_texture
     );
-    this->car->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, 0.0f) *
+    this->car->setGlobalTransform(getTranslationMatrix(-2.5f, 0.0f, 0.0f) *
                                   getScaleMatrix(scale));
     ADD_CHILD_MESH(canon, main_texture);
     ADD_CHILD_MESH(chain, main_texture);
