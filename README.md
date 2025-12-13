@@ -177,3 +177,33 @@ licensed under the
 Alike license.
 
 Modified to `.obj` format.
+
+#### Steel Driver
+
+[Steel Driver](https://sketchfab.com/3d-models/steel-driver-7b4f330f1af2420fbf1598e1ed8c9e98)
+by [Polygonal_64](https://sketchfab.com/LegoshiFan)
+licensed under the
+[Creative Commons - Attribution - Share](https://creativecommons.org/licenses/by-sa/3.0/)
+Alike license.
+
+Modified to `.obj` format.
+
+#### Steel Driver
+
+[Steel Driver](https://sketchfab.com/3d-models/steel-driver-7b4f330f1af2420fbf1598e1ed8c9e98)
+by [Polygonal_64](https://sketchfab.com/LegoshiFan)
+licensed under the
+[Creative Commons - Attribution - Share](https://creativecommons.org/licenses/by-sa/3.0/)
+Alike license.
+
+Modified to `.obj` format.
+
+#### Mario Kart Item Box
+
+[Mario Kart Item Box](https://sketchfab.com/3d-models/mario-kart-item-box-8f6a2b6b17b844c5b5dfa38375289975)
+by [Bscott5](https://sketchfab.com/Bscott5)
+licensed under the
+[Creative Commons - Attribution - Share](https://creativecommons.org/licenses/by-sa/3.0/)
+Alike license.
+
+Modified to `.obj` format.
