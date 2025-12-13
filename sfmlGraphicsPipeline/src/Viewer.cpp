@@ -548,7 +548,7 @@ void Viewer::handleEvent()
 
         // Translations
 
-        glm::vec3 step = m_keyboard.speed * dt * m_keyboard.normalized_direction();
+        glm::vec3 step = m_keyboard.speed * dt * m_keyboard.normalized_direction() * 2.0f;
         glm::vec3 forward = m_camera.getForward();
         glm::vec3 flat_forward = normalize(forward * glm::vec3(1.0f, 0.0f, 1.0f));
         glm::vec3 flat_right = normalize(m_camera.getRight() * glm::vec3(1.0f, 0.0f, 1.0f));
