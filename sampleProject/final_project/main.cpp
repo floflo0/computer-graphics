@@ -108,8 +108,14 @@ void initialize_scene(Viewer &viewer) {
     BowserPtr bowser = std::make_shared<Bowser>(textureShader, myMaterial,
                                                 glm::vec3(0.0f, 4.0f, 0.0f),
                                                 0.7f);
+
     viewer.addRenderable(bowser->getRenderable());
     KartPtr kart = std::make_shared<Kart>(textureShader, myMaterial, 0.05f);
+    kart->getRenderable()->setGlobalTransform(
+        getTranslationMatrix(20.0f, 1.2f, -1.6f) *
+        getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) *
+        getScaleMatrix(0.05f)
+    );
     viewer.addRenderable(kart->getRenderable());
     HierarchicalRenderable::addChild(kart->getRenderable(),
                                      bowser->getRenderable());
@@ -119,8 +125,9 @@ void initialize_scene(Viewer &viewer) {
 
     auto lakitu = std::make_shared<TexturedLightedMeshRenderable>(textureShader, lakitu_path, myMaterial, "../../sfmlGraphicsPipeline/textures/lakitu.png");
 
-    lakitu->setGlobalTransform(getTranslationMatrix(0.35f, 2.0f, -1.0f) * getScaleMatrix(0.02f));
+    // lakitu->setGlobalTransform(getTranslationMatrix(0.35f, 2.0f, -1.0f) * getScaleMatrix(0.02f));
 
+    lakitu->setGlobalTransform(getTranslationMatrix(23.0f, 3.5f, 2.0f) * getScaleMatrix(0.02f) * getRotationMatrix(M_PI*120/180, {0.0f, -1.0f, 0.0f})); 
     viewer.addRenderable(lakitu);
 
     // Create Bob-Omb
