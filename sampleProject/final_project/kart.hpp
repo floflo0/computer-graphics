@@ -14,9 +14,6 @@ private:
     TexturedLightedMeshRenderablePtr canon;
     TexturedLightedMeshRenderablePtr chain;
     TexturedLightedMeshRenderablePtr eyes;
-    TexturedLightedMeshRenderablePtr volant_centre;
-    TexturedLightedMeshRenderablePtr volant_tour;
-    TexturedLightedMeshRenderablePtr volant_barre;
     TexturedLightedMeshRenderablePtr gouvernaille;
     TexturedLightedMeshRenderablePtr cylinder_back;
     TexturedLightedMeshRenderablePtr cylinder_front;

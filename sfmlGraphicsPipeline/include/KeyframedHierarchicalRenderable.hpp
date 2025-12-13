@@ -12,7 +12,7 @@ class KeyframedHierarchicalRenderable : public HierarchicalRenderable
 {
 public:
     ~KeyframedHierarchicalRenderable();
-    KeyframedHierarchicalRenderable( ShaderProgramPtr program);
+    KeyframedHierarchicalRenderable(ShaderProgramPtr program);
 
     /**
      * \brief Add a keyframe for the local transformation of the renderable.

@@ -5,7 +5,7 @@
 class Bowser {
 public:
     Bowser(ShaderProgramPtr shader_program, const MaterialPtr &material,
-           const float scale);
+           const glm::vec3 position, const float scale);
 
     TexturedLightedMeshRenderablePtr getRenderable() const;
 
@@ -15,7 +15,6 @@ private:
     TexturedLightedMeshRenderablePtr arm_left;
     TexturedLightedMeshRenderablePtr leg_right;
     TexturedLightedMeshRenderablePtr leg_left;
-    TexturedLightedMeshRenderablePtr tail;
     TexturedLightedMeshRenderablePtr eyes;
 };
 

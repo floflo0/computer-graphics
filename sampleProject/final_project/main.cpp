@@ -45,13 +45,9 @@ void initialize_scene(Viewer &viewer) {
 
     viewer.addRenderable(cubemap);
 
-
-
     // auto frame = std::make_shared<FrameRenderable>(flatShader);
     // viewer.addRenderable(frame);
     // frame->setLocalTransform(getScaleMatrix(10,10,10));
-
-
 
     glm::mat4 globalTransformation, localTransformation;
 
@@ -110,8 +106,13 @@ void initialize_scene(Viewer &viewer) {
     MaterialPtr myMaterial = Material::Bronze();
 
     BowserPtr bowser = std::make_shared<Bowser>(textureShader, myMaterial,
-                                                0.05);
+                                                glm::vec3(0.0f, 4.0f, 0.0f),
+                                                0.7f);
     viewer.addRenderable(bowser->getRenderable());
+    KartPtr kart = std::make_shared<Kart>(textureShader, myMaterial, 0.05f);
+    viewer.addRenderable(kart->getRenderable());
+    HierarchicalRenderable::addChild(kart->getRenderable(),
+                                     bowser->getRenderable());
 
     // Create Lakitu
     const std::string lakitu_path = "../../sfmlGraphicsPipeline/meshes/lakitu.obj";
@@ -233,9 +234,6 @@ void initialize_scene(Viewer &viewer) {
     viewer.addRenderable(thwomp1);
     viewer.addRenderable(thwomp2);
     viewer.addRenderable(thwomp3);
-
-    KartPtr kart = std::make_shared<Kart>(textureShader, myMaterial, 0.05);
-    viewer.addRenderable(kart->getRenderable());
 
     // Create Rainbow Road
     const std::string rainbow_path = "../../sfmlGraphicsPipeline/meshes/rainbow_road.obj";
