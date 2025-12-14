@@ -230,6 +230,25 @@ static void camera_animation_follow_kart(std::shared_ptr<Camera> camera, float c
     camera->addGlobalTransformKeyframe(behind_kart, camera_animation_time);
 }
 
+static void thwomp_animation(TexturedLightedMeshRenderablePtr thwomp) {
+    GeometricTransformation thwomp_animation1 = GeometricTransformation(
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        qX(0),
+        glm::vec3(1.0f)
+    );
+    GeometricTransformation thwomp_animation2 = GeometricTransformation(
+        glm::vec3(0.0f, 150.0f, 0.0f),
+        qX(0),
+        glm::vec3(1.0f)
+    );
+
+    thwomp->addLocalTransformKeyframe(thwomp_animation1, 0.0f);
+    thwomp->addLocalTransformKeyframe(thwomp_animation1, 1.0f);
+    thwomp->addLocalTransformKeyframe(thwomp_animation2, 1.75f);
+    thwomp->addLocalTransformKeyframe(thwomp_animation2, 4.75f);
+    thwomp->addLocalTransformKeyframe(thwomp_animation1, 5.0f);
+}
+
 void initialize_scene(Viewer &viewer) {
     // Create a shader program
     ShaderProgramPtr flatShader = std::make_shared<ShaderProgram>(  "../../sfmlGraphicsPipeline/shaders/flatVertex.glsl",
@@ -488,17 +507,19 @@ void initialize_scene(Viewer &viewer) {
     // Create Thwomp
     const std::string thwomp_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/thwomp.obj";
 
-    auto thwomp1 = std::make_shared<TexturedLightedMeshRenderable>(textureShader, thwomp_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/thwomp1.png");
-    auto thwomp2 = std::make_shared<TexturedLightedMeshRenderable>(textureShader, thwomp_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/thwomp2.png");
-    auto thwomp3 = std::make_shared<TexturedLightedMeshRenderable>(textureShader, thwomp_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/thwomp3.png");
+    auto thwomp1 = std::make_shared<TexturedLightedMeshRenderable>(textureShader, thwomp_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/thwomp3.png");
+    auto thwomp2 = std::make_shared<TexturedLightedMeshRenderable>(textureShader, thwomp_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/thwomp3.png");
 
-    thwomp1->setGlobalTransform(getTranslationMatrix(-5.0f, 5.0f, 1.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.01f));
-    thwomp2->setGlobalTransform(getTranslationMatrix(-5.0f, 2.5f, 1.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.01f));
-    thwomp3->setGlobalTransform(getTranslationMatrix(-5.0f, -0.5f, 1.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.01f));
+    const float thwomp_scale = 0.01f;
+    thwomp1->setGlobalTransform(getTranslationMatrix(-5.0f, 5.0f, 1.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(thwomp_scale));
+    thwomp2->setGlobalTransform(getTranslationMatrix(44.4f, 1.2f, -15.0f) * getScaleMatrix(thwomp_scale));
+
+
+    thwomp_animation(thwomp1);
+    thwomp_animation(thwomp2);
 
     viewer.addRenderable(thwomp1);
     viewer.addRenderable(thwomp2);
-    viewer.addRenderable(thwomp3);
 
     // Create Mystery Cube
     const std::string mystery_cube_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/mystery_cube.obj";
@@ -607,11 +628,10 @@ int main() {
             rightFire->setMaterial(greenMat);
         }
 
-
-        // if (!camera_follow_kart && camera_animation_timer - time <= 0.0f) {
-        //     camera_animation_follow_kart(camera, camera_animation_timer);
-        //     camera_follow_kart = true;
-        // }
+        if (!camera_follow_kart && camera_animation_timer - time <= 0.0f) {
+            camera_animation_follow_kart(camera, camera_animation_timer);
+            camera_follow_kart = true;
+        }
         if (!kart_wheel_rotating && time >= RACE_START_TIME - 2.0f) {
             kart->startRotateWheels();
             kart_wheel_rotating = true;
@@ -1755,12 +1775,12 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 21.5f
     );
 
-    // ADD BOB-OMB HIT ANIMATION HERE
-    // straight line + bob-omb 
+    // TODO ADD BOB-OMB HIT ANIMATION HERE
+    // straight line + bob-omb
 
     kart->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {37.5f, 1.9f, -46.8f},   
+            {37.5f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
@@ -1959,7 +1979,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 29.0f
     );
 
-    // straight line 
+    // straight line
 
     kart->addGlobalTransformKeyframe(
         GeometricTransformation(
@@ -2050,7 +2070,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     kart->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {39.9f, 1.17f, -1.6f},   
+            {39.9f, 1.17f, -1.6f},
             glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
@@ -2061,7 +2081,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     kart->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {35.5f, 1.17f, -1.6f},   
+            {35.5f, 1.17f, -1.6f},
             glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
@@ -2072,7 +2092,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     kart->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {35.4f, 1.17f, -1.6f},   
+            {35.4f, 1.17f, -1.6f},
             glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
             {scale, scale/5, scale}
         ),
@@ -2081,7 +2101,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     kart->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {20.5f, 1.17f, -1.6f},   
+            {20.5f, 1.17f, -1.6f},
             glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
             {scale, scale/5, scale}
         ),
@@ -2090,7 +2110,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     kart->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {20.5f, 1.17f, -1.6f},   
+            {20.5f, 1.17f, -1.6f},
             glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
             {scale, scale/5, scale}
         ),
