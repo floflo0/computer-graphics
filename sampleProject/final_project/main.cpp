@@ -597,7 +597,7 @@ int main() {
     glCullFace(GL_BACK);
 
     auto camera = viewer.getCamera();
-    float camera_animation_timer = camera_intro_animation(camera);
+    // float camera_animation_timer = camera_intro_animation(camera);
 
     bool camera_follow_kart = false;
     bool kart_wheel_rotating = false;
