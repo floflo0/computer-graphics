@@ -3,6 +3,7 @@
  */
 #include "../../include/dynamics/ParticleListRenderable.hpp"
 #include <glm/gtc/type_ptr.hpp>
+#include <random>
 
 ParticleListRenderable::~ParticleListRenderable()
 {
@@ -23,8 +24,9 @@ ParticleListRenderable::ParticleListRenderable(ShaderProgramPtr program, std::ve
     unpack(uvec3_indices, m_indices),
 
     m_colors.resize( m_positions.size() );
-    for( size_t i = 0; i < m_positions.size(); ++ i )
-        m_colors[i] = getColor( m_positions[i].x, -1, 1 );
+    for( size_t i = 0; i < m_positions.size(); ++ i ){
+        m_colors[i] = glm::vec4(1.0f, 0.3f, 0.0f, 1.0f); 
+    }
 
     genbuffers();
     update_all_buffers();
