@@ -484,11 +484,13 @@ void initialize_scene(Viewer &viewer) {
     
     // Create a ground plane, so that particles can bounce on it
     // To adapat with the point the bob-omb will explode
-    glm::vec3 p1(46.0f, 2.3f, -48.0f); 
-    glm::vec3 p2(30.0f, 2.3f, -48.0f);
-    glm::vec3 p3(30.0f, 2.3f, -43.0f);
-    PlanePtr groundPlane = std::make_shared<Plane>(p1, p2, p3);
-    system->addPlaneObstacle(groundPlane);
+    glm::vec3 p1(40.0f, 1.9f, -47.0f); 
+    glm::vec3 p2(30.0f, 1.9f, -47.0f);
+    glm::vec3 p3(30.0f, 1.9f, -44.0f);
+    glm::vec3 p4(40.0f, 1.9f, -44.0f);
+
+    PlanePtr groundQuad = std::make_shared<Plane>(p1, p2, p3);
+    system->addPlaneObstacle(groundQuad);
 
     // Create a renderable associated to the dynamic system
     // This renderable is responsible for calling DynamicSystem::computeSimulationStep() in the animate() function
@@ -505,15 +507,15 @@ void initialize_scene(Viewer &viewer) {
 
     movingBobomb(viewer, bobOmb);
 
-    //explosion(viewer, system, systemRenderable);
-
     auto bobOmbExplosion = std::make_shared<BobOmbExplosion>(
         system,
-        5.0f,                  // trigger time
+        lap2_start_time + 21.4f,                  // trigger time of the explosion
+        lap2_start_time + 21.4f + 5.0f,           // trigger time of deletion of particles
         bobOmb,
         systemRenderable,
         &viewer                                   // pass pointer to viewer
     );
+    viewer.addRenderable(bobOmbExplosion);
 }
 
 int main() {
@@ -1676,7 +1678,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 21.5f
     );
 
-    // TODO ADD BOB-OMB HIT ANIMATION HERE
+    // ADD BOB-OMB HIT ANIMATION HERE
     // straight line + bob-omb 
 
     kart->addGlobalTransformKeyframe(
@@ -2034,7 +2036,7 @@ void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr& bobOmbRender
             qY(-2.2f),
             glm::vec3(epsilonScale)
         ),
-        0.0f
+        lap2_start_time + 0.0f
     );
 
     bobOmbRenderable->addGlobalTransformKeyframe(
@@ -2043,7 +2045,7 @@ void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr& bobOmbRender
             qY(-2.2f),
             glm::vec3(epsilonScale)
         ),
-        18.39f
+        lap2_start_time + 18.39f
     );
 
     // Bob-omb appears + balistic movement
@@ -2054,7 +2056,7 @@ void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr& bobOmbRender
             qY(-2.2f),
             glm::vec3(scale)
         ),
-        18.4f
+        lap2_start_time + 18.4f
     );
 
     bobOmbRenderable->addGlobalTransformKeyframe(
@@ -2063,7 +2065,7 @@ void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr& bobOmbRender
             qY(-2.0f),
             glm::vec3(scale)
         ),
-        18.6f
+        lap2_start_time + 18.6f
     );
 
     bobOmbRenderable->addGlobalTransformKeyframe(
@@ -2072,7 +2074,7 @@ void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr& bobOmbRender
             qY(-1.7f),
             glm::vec3(scale)
         ),
-        18.8f
+        lap2_start_time + 18.8f
     );
 
     bobOmbRenderable->addGlobalTransformKeyframe(
@@ -2081,7 +2083,7 @@ void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr& bobOmbRender
             qY(-1.4f),
             glm::vec3(scale)
         ),
-        19.0f
+        lap2_start_time + 19.0f
     );
 
     bobOmbRenderable->addGlobalTransformKeyframe(
@@ -2090,7 +2092,7 @@ void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr& bobOmbRender
             qY(-1.1f),
             glm::vec3(scale)
         ),
-        19.2f
+        lap2_start_time + 19.2f
     );
 
     bobOmbRenderable->addGlobalTransformKeyframe(
@@ -2099,7 +2101,7 @@ void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr& bobOmbRender
             qY(-0.8f),
             glm::vec3(scale)
         ),
-        19.4f
+        lap2_start_time + 19.4f
     );
 
     bobOmbRenderable->addGlobalTransformKeyframe(
@@ -2108,7 +2110,7 @@ void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr& bobOmbRender
             qY(-0.4f),
             glm::vec3(scale)
         ),
-        19.6f
+        lap2_start_time + 19.6f
     );
 
     bobOmbRenderable->addGlobalTransformKeyframe(
@@ -2117,7 +2119,7 @@ void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr& bobOmbRender
             qY(0.0f),
             glm::vec3(scale)
         ),
-        19.8f
+        lap2_start_time + 19.8f
     );
 
     bobOmbRenderable->addGlobalTransformKeyframe(
@@ -2126,7 +2128,7 @@ void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr& bobOmbRender
             qY(0.0f),
             glm::vec3(scale)
         ),
-        20.0f
+        lap2_start_time + 20.0f
     );
 
     bobOmbRenderable->addGlobalTransformKeyframe(
@@ -2135,7 +2137,7 @@ void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr& bobOmbRender
             qY(0.0f),
             glm::vec3(scale)
         ),
-        21.6f
+        lap2_start_time + 21.6f
     );
 
     bobOmbRenderable->addGlobalTransformKeyframe(
@@ -2144,7 +2146,7 @@ void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr& bobOmbRender
             qY(5.0f),
             glm::vec3(epsilonScale) // Scales down to disappear
         ),
-        21.6f
+        lap2_start_time + 21.6f
     );
 
     bobOmbRenderable->addGlobalTransformKeyframe(

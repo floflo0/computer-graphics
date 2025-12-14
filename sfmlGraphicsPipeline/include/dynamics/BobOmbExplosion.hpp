@@ -3,14 +3,18 @@
 #include "../texturing/TexturedLightedMeshRenderable.hpp"
 #include "../Viewer.hpp"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/random.hpp>
+
 class BobOmbExplosion : public DelayTriggerRenderable {
 public:
     BobOmbExplosion(DynamicSystemPtr system,
-                    float triggerTime,
+                    float triggerTime_1,
+                    float triggerTime_2,
                     TexturedLightedMeshRenderablePtr bobOmb,
                     DynamicSystemRenderablePtr systemRenderable,
                     Viewer* viewer)
-        : DelayTriggerRenderable(system, triggerTime),
+        : DelayTriggerRenderable(system, triggerTime_1, triggerTime_2),
           m_bobOmb(bobOmb),
           m_system(system),
           m_systemRenderable(systemRenderable),
@@ -18,10 +22,16 @@ public:
     {}
 
 protected:
-    void onTrigger() override;
-    bool m_triggered = false;
+    void onTrigger_1() override;
+    void onTrigger_2() override;
+    bool m_triggered_1 = false;
+    bool m_triggered_2 = false;
+    const int numParticles = 100;
+    std::vector<ParticlePtr> particles;
 
 private:
+    void explosion();
+
     TexturedLightedMeshRenderablePtr m_bobOmb;
     DynamicSystemPtr m_system;
     DynamicSystemRenderablePtr m_systemRenderable;

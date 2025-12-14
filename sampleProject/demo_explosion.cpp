@@ -107,7 +107,7 @@ void initialize_scene(Viewer &viewer) {
         &viewer                // pass pointer to viewer
     );
 
-viewer.addRenderable(bobOmbExplosion);
+    viewer.addRenderable(bobOmbExplosion);
 
 }
 
