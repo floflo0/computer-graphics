@@ -59,7 +59,7 @@ void Renderable::keyPressedEvent(sf::Event& e)
 }
 
 void Renderable::keyReleasedEvent(sf::Event& e)
-{   
+{
     do_keyReleasedEvent( e );
 }
 

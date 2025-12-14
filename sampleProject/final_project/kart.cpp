@@ -74,6 +74,18 @@ Kart::Kart(ShaderProgramPtr shader_program, const MaterialPtr &material,
     ADD_CHILD_MESH(tire_front_right, main_texture, axle_front_right);
     ADD_CHILD_MESH(tire_front_left, main_texture, axle_front_left);
 
+    this->tire_back_right->setLocalTransform(getTranslationMatrix(tire_back_right_origin));
+    this->tire_back_left->setLocalTransform(getTranslationMatrix(tire_back_left_origin));
+    this->tire_front_right->setLocalTransform(getTranslationMatrix(tire_front_right_origin));
+    this->tire_front_left->setLocalTransform(getTranslationMatrix(tire_front_left_origin));
+}
+
+TexturedLightedMeshRenderablePtr Kart::getRenderable() const {
+    return this->car;
+}
+
+
+void Kart::startRotateWheels() {
     const auto tire_roation1 = GeometricTransformation(
         glm::vec3(0.0f),
         qX(0.0f),
@@ -95,11 +107,6 @@ Kart::Kart(ShaderProgramPtr shader_program, const MaterialPtr &material,
         glm::vec3(1.0f)
     );
 
-    this->tire_back_right->setLocalTransform(getTranslationMatrix(tire_back_right_origin));
-    this->tire_back_left->setLocalTransform(getTranslationMatrix(tire_back_left_origin));
-    this->tire_front_right->setLocalTransform(getTranslationMatrix(tire_front_right_origin));
-    this->tire_front_left->setLocalTransform(getTranslationMatrix(tire_front_left_origin));
-
     this->tire_back_right->addGlobalTransformKeyframe(tire_roation1, 0.0f);
     this->tire_back_right->addGlobalTransformKeyframe(tire_roation2, 0.25f * TIRE_ROTATION_SPEED);
     this->tire_back_right->addGlobalTransformKeyframe(tire_roation3, 0.5f * TIRE_ROTATION_SPEED);
@@ -120,8 +127,4 @@ Kart::Kart(ShaderProgramPtr shader_program, const MaterialPtr &material,
     this->tire_front_left->addGlobalTransformKeyframe(tire_roation3, 0.5f * TIRE_ROTATION_SPEED);
     this->tire_front_left->addGlobalTransformKeyframe(tire_roation4, 0.75f * TIRE_ROTATION_SPEED);
     this->tire_front_left->addGlobalTransformKeyframe(tire_roation1, TIRE_ROTATION_SPEED);
-}
-
-TexturedLightedMeshRenderablePtr Kart::getRenderable() const {
-    return this->car;
 }

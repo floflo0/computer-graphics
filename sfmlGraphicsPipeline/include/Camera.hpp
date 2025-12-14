@@ -302,7 +302,7 @@ private:
     float m_zfar;
     glm::mat4 m_view;
     glm::mat4 m_base_view;
-    glm::mat4 m_projection; 
+    glm::mat4 m_projection;
     glm::quat m_last_q;
     glm::quat m_current_q;
     glm::vec2 m_start;
