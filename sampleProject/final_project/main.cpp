@@ -46,7 +46,7 @@ void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr &bobOmb);
 float lap2_start_time;
 
 
-/*
+
 static float camera_intro_animation(std::shared_ptr<Camera> camera) {
     camera->m_globalKeyframes.clear();
 
@@ -226,7 +226,6 @@ static void camera_animation_follow_kart(std::shared_ptr<Camera> camera, float c
     camera_animation_time += 3.0f;
     camera->addGlobalTransformKeyframe(behind_kart, camera_animation_time);
 }
-*/
 
 void initialize_scene(Viewer &viewer) {
     // Create a shader program
@@ -556,8 +555,8 @@ int main() {
 
     glCullFace(GL_BACK);
 
-    //auto camera = viewer.getCamera();
-    //float camera_animation_timer = camera_intro_animation(camera);
+    auto camera = viewer.getCamera();
+    float camera_animation_timer = camera_intro_animation(camera);
 
     bool camera_follow_kart = false;
     bool kart_wheel_rotating = false;
