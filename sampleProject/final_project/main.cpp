@@ -2,6 +2,7 @@
 #include <FrameRenderable.hpp>
 #include <MeshRenderable.hpp>
 #include <ShaderProgram.hpp>
+#include <cstdio>
 #include <GeometricTransformation.hpp>
 #include <FrameRenderable.hpp>
 #include <Utils.hpp>
@@ -31,6 +32,7 @@
 #define RACE_START_TIME 15.0f  // seconds
 
 KartPtr kart;
+TexturedLightedMeshRenderablePtr steel_driver;
 
 MaterialPtr redMat;
 MaterialPtr greenMat;
@@ -41,6 +43,7 @@ LightedSphereRenderablePtr middleFire;
 LightedSphereRenderablePtr rightFire;
 
 void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart);
+void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& steel_driver);
 void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr &bobOmb);
 
 float lap2_start_time;
@@ -257,20 +260,28 @@ void initialize_scene(Viewer &viewer) {
 
 
     //lumières directionnelles (globale)
-    glm::vec3 d_direction = glm::normalize(glm::vec3(0.0,-1.0,-1.0));
-    glm::vec3 d_ambient(5.0,5.0,5.0), d_diffuse(0.3,0.3,0.1), d_specular(0.3,0.3,0.1);
-    //glm::vec3 d_ambient(0.0,0.0,0.0), d_diffuse(0.0,0.0,0.0), d_specular(0.0,0.0,0.0);
-    glm::vec3 lightPosition(0.0,5.0,8.0);
-    DirectionalLightPtr directionalLight = std::make_shared<DirectionalLight>(d_direction, d_ambient, d_diffuse, d_specular);
-    directionalLight->setGlobalTransform(getTranslationMatrix(lightPosition) * directionalLight->getGlobalTransform());
+    glm::vec3 d_ambient(2.0f), d_diffuse(1.0f), d_specular(0.5f);
 
-    viewer.addDirectionalLight(directionalLight);
+    glm::vec3 d_direction1 = glm::normalize(glm::vec3(-1.0,-1.0,0.0));
+    DirectionalLightPtr directionalLight1 = std::make_shared<DirectionalLight>(d_direction1, d_ambient, d_diffuse, d_specular);
 
-    //Ajout d'un matériel pour nos objets 3D
-    glm::vec3 mAmbient(0.0), mDiffuse(0.0), mSpecular(0.0);
-    float mShininess=0.0;
+    glm::vec3 d_direction2 = glm::normalize(glm::vec3(0.0,-1.0,-1.0));
+    DirectionalLightPtr directionalLight2 = std::make_shared<DirectionalLight>(d_direction2, d_ambient, d_diffuse, d_specular);
+
+    glm::vec3 d_direction3 = glm::normalize(glm::vec3(1.0,-1.0,0.0));
+    DirectionalLightPtr directionalLight3 = std::make_shared<DirectionalLight>(d_direction3, d_ambient, d_diffuse, d_specular);
+
+    viewer.addDirectionalLight(directionalLight1);
+    viewer.addDirectionalLight(directionalLight2);
+    viewer.addDirectionalLight(directionalLight3);
+
     // MaterialPtr myMaterial = std::make_shared<Material>(mAmbient, mDiffuse, mSpecular, mShininess);
-    MaterialPtr myMaterial = Material::Bronze();
+    MaterialPtr myMaterial = std::make_shared<Material>(
+            glm::vec3(0.05f), // ambient
+            glm::vec3(0.15f), // diffuse
+            glm::vec3(1.0f),  // specular
+            1.0f
+        );
 
 
     //------------------Gestion du départ (feu + lakitu)-----------------------------
@@ -354,7 +365,7 @@ void initialize_scene(Viewer &viewer) {
     );
     // Create Steel Driver (penguin kart)
     const std::string steel_driver_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/steel_driver.obj";
-    TexturedLightedMeshRenderablePtr steel_driver = std::make_shared<TexturedLightedMeshRenderable>(textureShader, steel_driver_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/steel_driver.png");
+    steel_driver = std::make_shared<TexturedLightedMeshRenderable>(textureShader, steel_driver_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/steel_driver.png");
 
     steel_driver->setGlobalTransform(
         getTranslationMatrix(30.0f, 1.3f, -0.6f) *
@@ -496,9 +507,10 @@ void initialize_scene(Viewer &viewer) {
     // Create Rainbow Road
     const std::string rainbow_path = "../../sfmlGraphicsPipeline/meshes/rainbow_road.obj";
     const std::string rainbow_texture_path = "../../sfmlGraphicsPipeline/textures/rainbow_road.png";
-    auto rainbow = std::make_shared<TexturedMeshRenderable>(
-        texShader,
+    auto rainbow = std::make_shared<TexturedLightedMeshRenderable>(
+        textureShader,
         rainbow_path,
+        myMaterial,
         rainbow_texture_path
     );
     rainbow->setGlobalTransform(getScaleMatrix(0.4f));
@@ -533,6 +545,7 @@ void initialize_scene(Viewer &viewer) {
 
     auto kartRenderable = kart->getRenderable();
     kartBowser_animation(viewer, kartRenderable);
+    kartPenguin_animation(viewer, steel_driver);
 
     movingBobomb(viewer, bobOmb);
 
@@ -556,7 +569,7 @@ int main() {
     glCullFace(GL_BACK);
 
     auto camera = viewer.getCamera();
-    float camera_animation_timer = camera_intro_animation(camera);
+    // float camera_animation_timer = camera_intro_animation(camera);
 
     bool camera_follow_kart = false;
     bool kart_wheel_rotating = false;
@@ -565,6 +578,8 @@ int main() {
 
     while(viewer.isRunning()) {
         viewer.handleEvent();
+
+        printf("%f, %f, %f \n", camera->getPosition().x, camera->getPosition().y, camera->getPosition().z);
 
         const float time = viewer.getTime();
 
@@ -585,10 +600,10 @@ int main() {
         }
 
 
-        if (!camera_follow_kart && camera_animation_timer - time <= 0.0f) {
-            camera_animation_follow_kart(camera, camera_animation_timer);
-            camera_follow_kart = true;
-        }
+        // if (!camera_follow_kart && camera_animation_timer - time <= 0.0f) {
+        //     camera_animation_follow_kart(camera, camera_animation_timer);
+        //     camera_follow_kart = true;
+        // }
         if (!kart_wheel_rotating && time >= RACE_START_TIME - 2.0f) {
             kart->startRotateWheels();
             kart_wheel_rotating = true;
