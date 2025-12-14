@@ -2,20 +2,25 @@
 #include <FrameRenderable.hpp>
 #include <MeshRenderable.hpp>
 #include <ShaderProgram.hpp>
-#include <texturing/TexturedMeshRenderable.hpp>
+#include <GeometricTransformation.hpp>
+#include <FrameRenderable.hpp>
+#include <Utils.hpp>
 #include <Viewer.hpp>
+
+#include <dynamics/BobOmbExplosion.hpp>
+#include <dynamics/EulerExplicitSolver.hpp>
+
 #include <lighting/LightedMeshRenderable.hpp>
 #include <lighting/LightedCubeRenderable.hpp>
 #include <lighting/LightedCylinderRenderable.hpp>
 #include <lighting/DirectionalLightRenderable.hpp>
 #include <lighting/PointLightRenderable.hpp>
 #include <lighting/SpotLightRenderable.hpp>
-#include <FrameRenderable.hpp>
 #include <lighting/Material.hpp>
+
 #include <texturing/CubeMapRenderable.hpp>
 #include <texturing/TexturedLightedMeshRenderable.hpp>
-#include <GeometricTransformation.hpp>
-#include <Utils.hpp>
+#include <texturing/TexturedMeshRenderable.hpp>
 
 #include "bowser.hpp"
 #include "kart.hpp"
@@ -25,6 +30,10 @@
 KartPtr kart;
 
 void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart);
+void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr &bobOmb);
+
+float lap2_start_time;
+
 
 /*
 static float camera_intro_animation(std::shared_ptr<Camera> camera) {
@@ -467,12 +476,44 @@ void initialize_scene(Viewer &viewer) {
 
     viewer.addRenderable(rainbow);
 
+    // Initialize a dynamic system (Solver, Time step, Restitution coefficient)
+    DynamicSystemPtr system = std::make_shared<DynamicSystem>();
+    EulerExplicitSolverPtr solver = std::make_shared<EulerExplicitSolver>();
+    system->setSolver(solver);
+    system->setDt(0.01);
+    
+    // Create a ground plane, so that particles can bounce on it
+    // To adapat with the point the bob-omb will explode
+    glm::vec3 p1(46.0f, 2.3f, -48.0f); 
+    glm::vec3 p2(30.0f, 2.3f, -48.0f);
+    glm::vec3 p3(30.0f, 2.3f, -43.0f);
+    PlanePtr groundPlane = std::make_shared<Plane>(p1, p2, p3);
+    system->addPlaneObstacle(groundPlane);
+
+    // Create a renderable associated to the dynamic system
+    // This renderable is responsible for calling DynamicSystem::computeSimulationStep() in the animate() function
+    // It is also responsible for some of the key/mouse events
+    DynamicSystemRenderablePtr systemRenderable = std::make_shared<DynamicSystemRenderable>(system);
+    viewer.addRenderable(systemRenderable);
+
     /*
     ANIMATIONS START HERE
     */
 
     auto kartRenderable = kart->getRenderable();
     kartBowser_animation(viewer, kartRenderable);
+
+    movingBobomb(viewer, bobOmb);
+
+    //explosion(viewer, system, systemRenderable);
+
+    auto bobOmbExplosion = std::make_shared<BobOmbExplosion>(
+        system,
+        5.0f,                  // trigger time
+        bobOmb,
+        systemRenderable,
+        &viewer                                   // pass pointer to viewer
+    );
 }
 
 int main() {
@@ -1238,7 +1279,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     2nd ROUND
     */
 
-    float lap2_start_time = animation_time;
+    lap2_start_time = animation_time;
 
     // MUSHROOM BOOST AT THE START OF THE LAP
 
@@ -1978,4 +2019,140 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     // Finish line yayyy
+}
+
+void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr& bobOmbRenderable)
+{
+    const float scale = 0.1f;
+    constexpr float epsilonScale = 0.0001f;
+
+    // Hide de bob-omb at the beginning
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {32.0f, 0.8f, -35.0f},
+            qY(-2.2f),
+            glm::vec3(epsilonScale)
+        ),
+        0.0f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {32.0f, 0.8f, -35.0f},
+            qY(-2.2f),
+            glm::vec3(epsilonScale)
+        ),
+        18.39f
+    );
+
+    // Bob-omb appears + balistic movement
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {32.0f, 0.8f, -35.0f},
+            qY(-2.2f),
+            glm::vec3(scale)
+        ),
+        18.4f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {33.5f, 2.8f, -37.8f},
+            qY(-2.0f),
+            glm::vec3(scale)
+        ),
+        18.6f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {34.0f, 4.5f, -40.5f},
+            qY(-1.7f),
+            glm::vec3(scale)
+        ),
+        18.8f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {34.6f, 5.9f, -43.2f},
+            qY(-1.4f),
+            glm::vec3(scale)
+        ),
+        19.0f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {35.8f, 5.6f, -45.0f},
+            qY(-1.1f),
+            glm::vec3(scale)
+        ),
+        19.2f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {36.6f, 4.5f, -46.0f},
+            qY(-0.8f),
+            glm::vec3(scale)
+        ),
+        19.4f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {37.2f, 3.05f, -46.6f},
+            qY(-0.4f),
+            glm::vec3(scale)
+        ),
+        19.6f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {37.5f, 2.35f, -46.8f},
+            qY(0.0f),
+            glm::vec3(scale)
+        ),
+        19.8f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {37.5f, 2.3, -46.8f},
+            qY(0.0f),
+            glm::vec3(scale)
+        ),
+        20.0f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {37.5f, 2.3f, -46.8f},
+            qY(0.0f),
+            glm::vec3(scale)
+        ),
+        21.6f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {37.5f, 2.3f, -46.8f},   
+            qY(5.0f),
+            glm::vec3(epsilonScale) // Scales down to disappear
+        ),
+        21.6f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {0.0f, -1000.0f, 0.0f}, // Push the bob-omb far below scene
+            qY(5.0f),
+            glm::vec3(epsilonScale)
+        ),
+        200.0f // Freeze the animation, our film won't exceed 200 seconds
+    );
 }
