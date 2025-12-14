@@ -3,6 +3,7 @@
 #include <MeshRenderable.hpp>
 #include <ShaderProgram.hpp>
 #include <texturing/TexturedMeshRenderable.hpp>
+#include <SphereMeshRenderable.hpp>
 #include <Viewer.hpp>
 #include <lighting/LightedMeshRenderable.hpp>
 #include <lighting/LightedCubeRenderable.hpp>
@@ -209,15 +210,15 @@ static void camera_animation_follow_kart(std::shared_ptr<Camera> camera, float c
 void initialize_scene(Viewer &viewer) {
     // Create a shader program
     ShaderProgramPtr flatShader = std::make_shared<ShaderProgram>(  "../../sfmlGraphicsPipeline/shaders/flatVertex.glsl",
-                                                                    "../../sfmlGraphicsPipeline/shaders/flatFragment.glsl");
+                                                                  "../../sfmlGraphicsPipeline/shaders/flatFragment.glsl");
     ShaderProgramPtr cubeMapShader = std::make_shared<ShaderProgram>(  "../../sfmlGraphicsPipeline/shaders/cubeMapVertex.glsl",
-                                                                    "../../sfmlGraphicsPipeline/shaders/cubeMapFragment.glsl");
+                                                                     "../../sfmlGraphicsPipeline/shaders/cubeMapFragment.glsl");
     ShaderProgramPtr phongShader = std::make_shared<ShaderProgram>(  "../../sfmlGraphicsPipeline/shaders/phongVertex.glsl",
-                                                                    "../../sfmlGraphicsPipeline/shaders/phongFragment.glsl");
+                                                                   "../../sfmlGraphicsPipeline/shaders/phongFragment.glsl");
     ShaderProgramPtr texShader = std::make_shared<ShaderProgram>(   "../../sfmlGraphicsPipeline/shaders/simpleTextureVertex.glsl",
                                                                  "../../sfmlGraphicsPipeline/shaders/simpleTextureFragment.glsl");
     ShaderProgramPtr textureShader = std::make_shared<ShaderProgram>(   "../../sfmlGraphicsPipeline/shaders/textureVertex.glsl",
-                                                                    "../../sfmlGraphicsPipeline/shaders/textureFragment.glsl");
+                                                                     "../../sfmlGraphicsPipeline/shaders/textureFragment.glsl");
     viewer.addShaderProgram(textureShader);
     viewer.addShaderProgram(flatShader);
     viewer.addShaderProgram(cubeMapShader);
@@ -245,46 +246,28 @@ void initialize_scene(Viewer &viewer) {
 
     viewer.addDirectionalLight(directionalLight);
 
-    //Lumières de spots
-    glm::vec3 s_position(0.0,5.0,-5.0), s_spotDirection = glm::normalize(glm::vec3(0.0,-1.0,1.0));
-    //glm::vec3 s_ambient(0.0,0.0,0.0), s_diffuse(0.0,0.0,0.0), s_specular(0.0,0.0,0.0);
-    glm::vec3 s_ambient(0.0,0.0,0.0), s_diffuse(0.5,0.5,0.5), s_specular(0.5,0.5,0.5);
-    float s_constant=1.0, s_linear=0.0, s_quadratic=0.0;
-    float s_innerCutOff=std::cos(glm::radians(10.0f)), s_outerCutOff=std::cos(glm::radians(20.0f));
-    SpotLightPtr spotLight1 = std::make_shared<SpotLight>(s_position, s_spotDirection,
-                                                         s_ambient, s_diffuse, s_specular,
-                                                         s_constant, s_linear, s_quadratic,
-                                                         s_innerCutOff, s_outerCutOff);
 
-    glm::vec3 s_position2(2.5,5,2.5), s_spotDirection2 = glm::normalize(glm::vec3(-0.5,-1.0,-0.5));
-    //glm::vec3 s_ambient(0.0,0.0,0.0), s_diffuse(0.0,0.0,0.0), s_specular(0.0,0.0,0.0);
-    glm::vec3 s_ambient2(0.0,0.0,0.0), s_diffuse2(0.5,0.5,0.5), s_specular2(0.5,0.5,0.5);
-    float s_constant2=1.0, s_linear2=0.0, s_quadratic2=0.0;
-    float s_innerCutOff2=std::cos(glm::radians(10.0f)), s_outerCutOff2=std::cos(glm::radians(20.0f));
-    SpotLightPtr spotLight2 = std::make_shared<SpotLight>(s_position2, s_spotDirection2,
-                                                         s_ambient2, s_diffuse2, s_specular2,
-                                                         s_constant2, s_linear2, s_quadratic2,
-                                                         s_innerCutOff2, s_outerCutOff2);
+    { // Boitier du feu
+        auto blackMaterial = std::make_shared<Material>(
+            glm::vec3(0.02f, 0.02f, 0.02f), // ambient (un peu visible)
+            glm::vec3(0.05f, 0.05f, 0.05f), // diffuse
+            glm::vec3(0.0f),               // specular (mat)
+            1.0f
+        );
 
-    glm::vec3 s_position3(-2.5,5.0,2.5), s_spotDirection3 = glm::normalize(glm::vec3(0.5,-1.0,-0.5));
-    //glm::vec3 s_ambient(0.0,0.0,0.0), s_diffuse(0.0,0.0,0.0), s_specular(0.0,0.0,0.0);
-    glm::vec3 s_ambient3(0.0,0.0,0.0), s_diffuse3(0.5,0.5,0.5), s_specular3(0.5,0.5,0.5);
-    float s_constant3=1.0, s_linear3=0.0, s_quadratic3=0.0;
-    float s_innerCutOff3=std::cos(glm::radians(10.0f)), s_outerCutOff3=std::cos(glm::radians(20.0f));
-    SpotLightPtr spotLight3 = std::make_shared<SpotLight>(s_position3, s_spotDirection3,
-                                                         s_ambient3, s_diffuse3, s_specular3,
-                                                         s_constant3, s_linear3, s_quadratic3,
-                                                         s_innerCutOff3, s_outerCutOff3);
-
-    viewer.addSpotLight(spotLight1);
-    viewer.addSpotLight(spotLight2);
-    viewer.addSpotLight(spotLight3);
+        auto feuBoitier = std::make_shared<LightedCubeRenderable>(phongShader, false, blackMaterial);
+        feuBoitier -> setGlobalTransform(getTranslationMatrix(glm::vec3(23.1f, 3.0f, 2.1f)) * getRotationMatrix(M_PI_4f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(2.2f, 0.6f, 0.6f));
+        viewer.addRenderable(feuBoitier);
+    }
 
     //Ajout d'un matériel pour nos objets 3D
     glm::vec3 mAmbient(0.0), mDiffuse(0.0), mSpecular(0.0);
     float mShininess=0.0;
     // MaterialPtr myMaterial = std::make_shared<Material>(mAmbient, mDiffuse, mSpecular, mShininess);
     MaterialPtr myMaterial = Material::Bronze();
+
+
+    //----------------- Ajout des coureurs ---------------------------
 
     BowserPtr bowser = std::make_shared<Bowser>(textureShader, myMaterial,
                                                 glm::vec3(0.0f, 4.0f, 0.0f),
@@ -299,6 +282,48 @@ void initialize_scene(Viewer &viewer) {
     viewer.addRenderable(kart->getRenderable());
     HierarchicalRenderable::addChild(kart->getRenderable(),
                                      bowser->getRenderable());
+
+    // Create Penguin
+    const std::string penguin_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/penguin.obj";
+    TexturedLightedMeshRenderablePtr penguin = std::make_shared<TexturedLightedMeshRenderable>(textureShader, penguin_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/penguin.png");
+    penguin->setGlobalTransform(
+        getTranslationMatrix(0.0f, 1.0f, 1.0f) *
+        getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) *
+        getScaleMatrix(0.5f)
+    );
+    // Create Steel Driver (penguin kart)
+    const std::string steel_driver_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/steel_driver.obj";
+    TexturedLightedMeshRenderablePtr steel_driver = std::make_shared<TexturedLightedMeshRenderable>(textureShader, steel_driver_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/steel_driver.png");
+
+    steel_driver->setGlobalTransform(
+        getTranslationMatrix(30.0f, 1.3f, -0.6f) *
+        getRotationMatrix(M_PI_2f, 0.0f, -1.0f, 0.0f) *
+        getScaleMatrix(0.06f)
+    );
+    viewer.addRenderable(steel_driver);
+    HierarchicalRenderable::addChild(steel_driver,
+                                     penguin);
+
+    // Create Pianta
+    const std::string pianta_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/pianta.obj";
+    TexturedLightedMeshRenderablePtr pianta = std::make_shared<TexturedLightedMeshRenderable>(textureShader, pianta_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/pianta.png");
+    pianta->setGlobalTransform(
+        getTranslationMatrix(0.0f, 5.0f, -4.0f) *
+        getRotationMatrix(M_PI_2f, -1.0f, 0.0f, 0.0f) *
+        getScaleMatrix(0.3f));
+
+    // Create Tri Speeder (pianta kart)
+    const std::string tri_speeder_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/tri_speeder.obj";
+    TexturedLightedMeshRenderablePtr tri_speeder = std::make_shared<TexturedLightedMeshRenderable>(textureShader, tri_speeder_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/tri_speeder.png");
+    tri_speeder->setGlobalTransform(
+        getTranslationMatrix(30.0f, 1.3f, -2.6f) *
+        getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) *
+        getRotationMatrix(M_PI_2f, 0.0f, 0.0f, 1.0f) *
+        getScaleMatrix(0.06f)
+    );
+    viewer.addRenderable(tri_speeder);
+    HierarchicalRenderable::addChild(tri_speeder,
+                                     pianta);
 
     // Create Lakitu
     const std::string lakitu_path = "../../sfmlGraphicsPipeline/meshes/lakitu.obj";
@@ -348,25 +373,6 @@ void initialize_scene(Viewer &viewer) {
     mushroom->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -7.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
 
     viewer.addRenderable(mushroom);
-
-    // Create Penguin
-    const std::string penguin_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/penguin.obj";
-
-    auto penguin = std::make_shared<TexturedLightedMeshRenderable>(textureShader, penguin_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/penguin.png");
-
-    penguin->setGlobalTransform(getTranslationMatrix(-5.0f, -0.5f, -8.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
-
-    viewer.addRenderable(penguin);
-
-    // Create Pianta
-    const std::string pianta_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/pianta.obj";
-
-    auto pianta = std::make_shared<TexturedLightedMeshRenderable>(textureShader, pianta_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/pianta.png");
-
-    pianta->setGlobalTransform(getTranslationMatrix(-4.5f, 0.0f, -10.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.1f));
-
-    viewer.addRenderable(pianta);
-
 
     // Create Blue Shell
     const std::string blueShell_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/blue-shell.obj";
@@ -431,25 +437,6 @@ void initialize_scene(Viewer &viewer) {
 
     viewer.addRenderable(mystery_cube);
 
-
-    // Create Steel Driver (penguin kart)
-    const std::string steel_driver_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/steel_driver.obj";
-
-    auto steel_driver = std::make_shared<TexturedLightedMeshRenderable>(textureShader, steel_driver_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/steel_driver.png");
-
-    steel_driver->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, 3.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.1f));
-
-    viewer.addRenderable(steel_driver);
-
-    // Create Tri Speeder (pianta kart)
-    const std::string tri_speeder_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/tri_speeder.obj";
-
-    auto tri_speeder = std::make_shared<TexturedLightedMeshRenderable>(textureShader, tri_speeder_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/tri_speeder.png");
-
-    tri_speeder->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, 4.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getRotationMatrix(M_PI_2f, 0.0f, 0.0f, 1.0f) * getScaleMatrix(0.1f));
-
-    viewer.addRenderable(tri_speeder);
-
     // Create Rainbow Road
     const std::string rainbow_path = "../../sfmlGraphicsPipeline/meshes/rainbow_road.obj";
     const std::string rainbow_texture_path = "../../sfmlGraphicsPipeline/textures/rainbow_road.png";
@@ -473,6 +460,7 @@ void initialize_scene(Viewer &viewer) {
 int main() {
     glm::vec4 background_color(0.0f, 0.0f, 0.0f, 1.0f);
     Viewer viewer(1280, 720, background_color);
+
     initialize_scene(viewer);
 
     glCullFace(GL_BACK);
@@ -484,6 +472,7 @@ int main() {
     bool kart_wheel_rotating = false;
 
     viewer.startAnimation();
+
     while(viewer.isRunning()) {
         viewer.handleEvent();
 
