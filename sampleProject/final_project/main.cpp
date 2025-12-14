@@ -2,12 +2,13 @@
 #include <FrameRenderable.hpp>
 #include <MeshRenderable.hpp>
 #include <ShaderProgram.hpp>
+#include <memory>
 #include <texturing/TexturedMeshRenderable.hpp>
-#include <SphereMeshRenderable.hpp>
 #include <Viewer.hpp>
 #include <lighting/LightedMeshRenderable.hpp>
 #include <lighting/LightedCubeRenderable.hpp>
 #include <lighting/LightedCylinderRenderable.hpp>
+#include <lighting/LightedSphereRenderable.hpp>
 #include <lighting/DirectionalLightRenderable.hpp>
 #include <lighting/PointLightRenderable.hpp>
 #include <lighting/SpotLightRenderable.hpp>
@@ -24,6 +25,14 @@
 #define RACE_START_TIME 15.0f  // seconds
 
 KartPtr kart;
+
+MaterialPtr redMat;
+MaterialPtr greenMat;
+MaterialPtr offMat;
+
+LightedSphereRenderablePtr leftFire;
+LightedSphereRenderablePtr middleFire;
+LightedSphereRenderablePtr rightFire;
 
 void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart);
 
@@ -246,26 +255,67 @@ void initialize_scene(Viewer &viewer) {
 
     viewer.addDirectionalLight(directionalLight);
 
-
-    { // Boitier du feu
-        auto blackMaterial = std::make_shared<Material>(
-            glm::vec3(0.02f, 0.02f, 0.02f), // ambient (un peu visible)
-            glm::vec3(0.05f, 0.05f, 0.05f), // diffuse
-            glm::vec3(0.0f),               // specular (mat)
-            1.0f
-        );
-
-        auto feuBoitier = std::make_shared<LightedCubeRenderable>(phongShader, false, blackMaterial);
-        feuBoitier -> setGlobalTransform(getTranslationMatrix(glm::vec3(23.1f, 3.0f, 2.1f)) * getRotationMatrix(M_PI_4f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(2.2f, 0.6f, 0.6f));
-        viewer.addRenderable(feuBoitier);
-    }
-
     //Ajout d'un matériel pour nos objets 3D
     glm::vec3 mAmbient(0.0), mDiffuse(0.0), mSpecular(0.0);
     float mShininess=0.0;
     // MaterialPtr myMaterial = std::make_shared<Material>(mAmbient, mDiffuse, mSpecular, mShininess);
     MaterialPtr myMaterial = Material::Bronze();
 
+
+    //------------------Gestion du départ (feu + lakitu)-----------------------------
+
+    // Create Lakitu
+    const std::string lakitu_path = "../../sfmlGraphicsPipeline/meshes/lakitu.obj";
+    auto lakitu = std::make_shared<TexturedLightedMeshRenderable>(textureShader, lakitu_path, myMaterial, "../../sfmlGraphicsPipeline/textures/lakitu.png");
+
+    lakitu->setGlobalTransform(getTranslationMatrix(24.0f, 3.5f, -5.2f) * getRotationMatrix(M_PI_4f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.02f));
+    viewer.addRenderable(lakitu);
+
+    { // Boitier du feu
+        auto blackMat = std::make_shared<Material>(
+            glm::vec3(0.02f, 0.02f, 0.02f), // ambient (un peu visible)
+            glm::vec3(0.05f, 0.05f, 0.05f), // diffuse
+            glm::vec3(0.0f),               // specular (mat)
+            1.0f
+        );
+
+        redMat = std::make_shared<Material>(
+            glm::vec3(0.1f, 0.0f, 0.0f), // ambient (un peu visible)
+            glm::vec3(1.0f, 0.0f, 0.0f), // diffuse
+            glm::vec3(0.0f),               // specular (mat)
+            1.0f
+        );
+
+        greenMat = std::make_shared<Material>(
+            glm::vec3(0.0f, 0.1f, 0.0f), // ambient (un peu visible)
+            glm::vec3(0.0f, 1.0f, 0.0f), // diffuse
+            glm::vec3(0.0f),               // specular (mat)
+            1.0f
+        );
+
+        offMat = std::make_shared<Material>(
+            glm::vec3(0.0f), // ambient (un peu visible)
+            glm::vec3(0.0f), // diffuse
+            glm::vec3(0.0f),               // specular (mat)
+            1.0f
+        );
+
+        auto feuBoitier = std::make_shared<LightedCubeRenderable>(phongShader, false, blackMat);
+        feuBoitier -> setGlobalTransform(getTranslationMatrix(glm::vec3(24.1f, 3.0f, -5.2f)) * getRotationMatrix(M_PI_4f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(2.2f, 0.6f, 0.6f));
+        viewer.addRenderable(feuBoitier);
+
+        leftFire = std::make_shared<LightedSphereRenderable>(phongShader, false, offMat, 20, 20, true);
+        middleFire = std::make_shared<LightedSphereRenderable>(phongShader, false, offMat, 20, 20, true);
+        rightFire = std::make_shared<LightedSphereRenderable>(phongShader, false, offMat, 20, 20, true);
+
+        leftFire->setGlobalTransform( getTranslationMatrix(23.75f,3.0f,-4.55f) * getScaleMatrix(0.3f));
+        middleFire->setGlobalTransform( getTranslationMatrix(24.25f,3.0f,-5.05f) * getScaleMatrix(0.3f));
+        rightFire->setGlobalTransform( getTranslationMatrix(24.75f,3.0f,-5.55f) * getScaleMatrix(0.3f));
+
+        viewer.addRenderable(leftFire);
+        viewer.addRenderable(middleFire);
+        viewer.addRenderable(rightFire);
+    }
 
     //----------------- Ajout des coureurs ---------------------------
 
@@ -325,15 +375,7 @@ void initialize_scene(Viewer &viewer) {
     HierarchicalRenderable::addChild(tri_speeder,
                                      pianta);
 
-    // Create Lakitu
-    const std::string lakitu_path = "../../sfmlGraphicsPipeline/meshes/lakitu.obj";
-
-    auto lakitu = std::make_shared<TexturedLightedMeshRenderable>(textureShader, lakitu_path, myMaterial, "../../sfmlGraphicsPipeline/textures/lakitu.png");
-
-    // lakitu->setGlobalTransform(getTranslationMatrix(0.35f, 2.0f, -1.0f) * getScaleMatrix(0.02f));
-
-    lakitu->setGlobalTransform(getTranslationMatrix(23.0f, 3.5f, 2.0f) * getScaleMatrix(0.02f) * getRotationMatrix(M_PI*120/180, {0.0f, -1.0f, 0.0f}));
-    viewer.addRenderable(lakitu);
+    //---------------------------------Placement des autres objets------------------------------------
 
     // Create Bob-Omb
     const std::string bobOmb_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/bob-omb.obj";
@@ -477,6 +519,24 @@ int main() {
         viewer.handleEvent();
 
         const float time = viewer.getTime();
+
+        if (time <= 11.0) {
+            leftFire->setMaterial(offMat);
+            middleFire->setMaterial(offMat);
+            rightFire->setMaterial(offMat);
+        }else if (time <= 12.0) {
+            leftFire->setMaterial(redMat);
+        }else if (time <= 13.0) {
+            middleFire->setMaterial(redMat);
+        }else if (time <= 14.0) {
+            rightFire->setMaterial(redMat);
+        }else if (time <= 15.0) {
+            leftFire->setMaterial(greenMat);
+            middleFire->setMaterial(greenMat);
+            rightFire->setMaterial(greenMat);
+        }
+
+
         if (!camera_follow_kart && camera_animation_timer - time <= 0.0f) {
             camera_animation_follow_kart(camera, camera_animation_timer);
             camera_follow_kart = true;
