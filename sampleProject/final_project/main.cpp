@@ -1153,7 +1153,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     kart->addGlobalTransformKeyframe(
         GeometricTransformation(
             {46.1f, 1.17f, -6.0f},
-            glm::angleAxis(glm::radians(-180.0f), glm::vec3(0,1,0)),
+            glm::angleAxis(glm::radians(350.0f), glm::vec3(0,1,0)),
             glm::vec3(scale)
         ),
         animation_time
@@ -1163,7 +1163,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     kart->addGlobalTransformKeyframe(
         GeometricTransformation(
             {45.5f, 1.17f, -4.0f},
-            glm::angleAxis(glm::radians(-160.0f), glm::vec3(0,1,0)),
+            glm::angleAxis(glm::radians(330.0f), glm::vec3(0,1,0)),
             glm::vec3(scale)
         ),
         animation_time
@@ -1173,7 +1173,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     kart->addGlobalTransformKeyframe(
         GeometricTransformation(
             {44.0f, 1.17f, -3.0f},
-            glm::angleAxis(glm::radians(-140.0f), glm::vec3(0,1,0)),
+            glm::angleAxis(glm::radians(310.0f), glm::vec3(0,1,0)),
             glm::vec3(scale)
         ),
         animation_time
@@ -1183,7 +1183,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     kart->addGlobalTransformKeyframe(
         GeometricTransformation(
             {42.0f, 1.17f, -1.8f},
-            glm::angleAxis(glm::radians(-110.0f), glm::vec3(0,1,0)),
+            glm::angleAxis(glm::radians(285.0f), glm::vec3(0,1,0)),
             glm::vec3(scale)
         ),
         animation_time
@@ -1195,7 +1195,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     kart->addGlobalTransformKeyframe(
         GeometricTransformation(
             {28.5f, 1.17f, -1.6f},
-            glm::angleAxis(glm::radians(-90.0f), glm::vec3(0, 1, 0)),
+            glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
         animation_time
@@ -1207,6 +1207,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     float lap2_start_time = animation_time;
 
+    // MUSHROOM BOOST AT THE START OF THE LAP
 
     kart->addGlobalTransformKeyframe(
         GeometricTransformation(
@@ -1543,11 +1544,11 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 14.0f
     );
 
-    // straight line after the red shell hit, low speed
+     // straight line after the red shell hit, low speed
 
     kart->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {32.0f, 0.6f, -20.0f},
+            {32.0f, 0.5f, -20.0f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
@@ -1556,10 +1557,392 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     kart->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {32.0f, 0.6f, -20.0f},
+            {31.5f, 1.8f, -43.0f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
         lap2_start_time + 20.0f
     );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {31.5f, 1.9f, -45.0f},
+            glm::angleAxis(glm::radians(170.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 20.2f
+    );
+
+    // right turn
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {33.5f, 1.9f, -46.0f},
+            glm::angleAxis(glm::radians(150.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 20.6f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {35.0f, 1.9f, -46.2f},
+            glm::angleAxis(glm::radians(120.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 21.0f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {37.0f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 21.5f
+    );
+
+    // TODO ADD BOB-OMB HIT ANIMATION HERE
+    // straight line + bob-omb 
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {37.5f, 1.9f, -46.8f},   
+            glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 21.6f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {38.0f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 21.7f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {38.5f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(130.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 21.8f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {39.0f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(170.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 21.9f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {39.5f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(210.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 22.0f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {40.0f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(240.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 22.1f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {40.5f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 22.2f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {41.0f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(310.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 22.3f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {41.6f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(350.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 22.4f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {42.1f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(30.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 22.5f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {42.6f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(70.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 22.6f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {43.1f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 22.7f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {43.6f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(110.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 22.8f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {44.1f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(130.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 22.9f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {44.5f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(150.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 23.0f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {44.9f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(170.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 23.1f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {45.2f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(190.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 23.2f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {45.5f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(210.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 23.3f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {45.7f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(230.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 23.4f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {45.9f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(250.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 23.5f
+    );
+
+    // stop time
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {45.9f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(250.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 26.0f
+    );
+
+    // turn left (static)
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {45.9f, 1.9f, -46.8f},
+            glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 29.0f
+    );
+
+    // straight line 
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {45.8f, 1.3f, -25.0f},
+            glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 32.5f
+    );
+
+    // TODO ADD A BANANA BEFORE THE RAMP
+    // Banana before the ramp, Bowser dodges it
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {47.3f, 1.3f, -23.0f},
+            glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 32.8f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {47.3f, 1.3f, -15.0f},
+            glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 34.1f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {47.1f, 1.3f, -11.0f},
+            glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 34.5f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {46.0f, 1.3f, -8.0f},
+            glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 34.8f
+    );
+
+
+    // right turn
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {45.9f, 1.17f, -6.0f},
+            glm::angleAxis(glm::radians(350.0f), glm::vec3(0,1,0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 36.0f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {45.4f, 1.17f, -4.0f},
+            glm::angleAxis(glm::radians(330.0f), glm::vec3(0,1,0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 36.2f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {43.9f, 1.17f, -3.0f},
+            glm::angleAxis(glm::radians(310.0f), glm::vec3(0,1,0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 36.4f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {42.0f, 1.17f, -1.8f},
+            glm::angleAxis(glm::radians(285.0f), glm::vec3(0,1,0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 36.6f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {39.9f, 1.17f, -1.6f},   
+            glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 36.9f
+    );
+
+    // straight line (a billball stamps on Bowser)
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {35.5f, 1.17f, -1.6f},   
+            glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 37.5f
+    );
+
+    //  TODO INSERT BILLBALL HERE
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {35.4f, 1.17f, -1.6f},   
+            glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
+            {scale, scale/5, scale}
+        ),
+        lap2_start_time + 37.6f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {20.5f, 1.17f, -1.6f},   
+            glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
+            {scale, scale/5, scale}
+        ),
+        lap2_start_time + 44.6f
+    );
+
+    kart->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {20.5f, 1.17f, -1.6f},   
+            glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
+            {scale, scale/5, scale}
+        ),
+        lap2_start_time + 50.0f
+    );
+
+    // Finish line yayyy
 }
