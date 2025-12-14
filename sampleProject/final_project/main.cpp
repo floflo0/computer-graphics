@@ -422,6 +422,34 @@ void initialize_scene(Viewer &viewer) {
     viewer.addRenderable(thwomp2);
     viewer.addRenderable(thwomp3);
 
+    // Create Mystery Cube
+    const std::string mystery_cube_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/mystery_cube.obj";
+
+    auto mystery_cube = std::make_shared<TexturedLightedMeshRenderable>(textureShader, mystery_cube_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/mystery_cube.jpg");
+
+    mystery_cube->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, 2.0f) * getScaleMatrix(0.02f));
+
+    viewer.addRenderable(mystery_cube);
+
+
+    // Create Steel Driver (penguin kart)
+    const std::string steel_driver_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/steel_driver.obj";
+
+    auto steel_driver = std::make_shared<TexturedLightedMeshRenderable>(textureShader, steel_driver_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/steel_driver.png");
+
+    steel_driver->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, 3.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.1f));
+
+    viewer.addRenderable(steel_driver);
+
+    // Create Tri Speeder (pianta kart)
+    const std::string tri_speeder_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/tri_speeder.obj";
+
+    auto tri_speeder = std::make_shared<TexturedLightedMeshRenderable>(textureShader, tri_speeder_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/tri_speeder.png");
+
+    tri_speeder->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, 4.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getRotationMatrix(M_PI_2f, 0.0f, 0.0f, 1.0f) * getScaleMatrix(0.1f));
+
+    viewer.addRenderable(tri_speeder);
+
     // Create Rainbow Road
     const std::string rainbow_path = "../../sfmlGraphicsPipeline/meshes/rainbow_road.obj";
     const std::string rainbow_texture_path = "../../sfmlGraphicsPipeline/textures/rainbow_road.png";
