@@ -520,17 +520,17 @@ int main() {
 
         const float time = viewer.getTime();
 
-        if (time <= 11.0) {
+        if (time <= 12.0) {
             leftFire->setMaterial(offMat);
             middleFire->setMaterial(offMat);
             rightFire->setMaterial(offMat);
-        }else if (time <= 12.0) {
-            leftFire->setMaterial(redMat);
         }else if (time <= 13.0) {
-            middleFire->setMaterial(redMat);
+            leftFire->setMaterial(redMat);
         }else if (time <= 14.0) {
-            rightFire->setMaterial(redMat);
+            middleFire->setMaterial(redMat);
         }else if (time <= 15.0) {
+            rightFire->setMaterial(redMat);
+        }else if (time <= 15.8) {
             leftFire->setMaterial(greenMat);
             middleFire->setMaterial(greenMat);
             rightFire->setMaterial(greenMat);
