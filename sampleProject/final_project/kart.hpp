@@ -1,17 +1,20 @@
 #pragma once
 
+#include <SkeletonRenderable.hpp>
 #include <texturing/TexturedLightedMeshRenderable.hpp>
 
 class Kart {
 public:
-    Kart(ShaderProgramPtr shader_program, const MaterialPtr &material,
-         const float scale);
+    Kart(ShaderProgramPtr shader_program, const MaterialPtr &material);
 
-    TexturedLightedMeshRenderablePtr getRenderable() const;
+    std::shared_ptr<SkeletonRenderable> getRenderable() const;
 
     void startRotateWheels();
 
+    TexturedLightedMeshRenderablePtr get_car() const;
+
 private:
+    std::shared_ptr<SkeletonRenderable> root;
     TexturedLightedMeshRenderablePtr car;
     TexturedLightedMeshRenderablePtr canon;
     TexturedLightedMeshRenderablePtr chain;

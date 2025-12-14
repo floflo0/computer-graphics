@@ -33,15 +33,20 @@ const std::string eyes_texture = "../../sfmlGraphicsPipeline/textures/kart/eyes.
         TexturedLightedMeshRenderable::addChild(parent, this->part);  \
     } while (0)
 
-Kart::Kart(ShaderProgramPtr shader_program, const MaterialPtr &material,
-           const float scale) {
-    this->car = std::make_shared<TexturedLightedMeshRenderable>(
-        shader_program,
-        mesh_car_path,
-        material,
-        main_texture
-    );
-    this->car->setGlobalTransform(getScaleMatrix(scale));
+Kart::Kart(ShaderProgramPtr shader_program, const MaterialPtr &material) {
+    this->root = std::make_shared<SkeletonRenderable>(shader_program);
+
+    ADD_CHILD_MESH(car, main_texture, this->root);
+
+    ADD_CHILD_MESH(canon, main_texture, this->car);
+    ADD_CHILD_MESH(chain, main_texture, this->car);
+    ADD_CHILD_MESH(eyes, eyes_texture, this->car);
+    ADD_CHILD_MESH(gouvernaille, main_texture, this->car);
+    ADD_CHILD_MESH(cylinder_back, main_texture, this->car);
+    ADD_CHILD_MESH(cylinder_front, main_texture, this->car);
+    ADD_CHILD_MESH(head_back, main_texture, this->car);
+    ADD_CHILD_MESH(hair_head_back, main_texture, this->car);
+    ADD_CHILD_MESH(head_front, main_texture, this->car);
 
     const auto tire_back_right_origin = glm::vec3(0.0f, -3.5f, 1.5f);
     const auto tire_back_left_origin = glm::vec3(0.0f, -3.5f, 1.5f);
@@ -60,15 +65,6 @@ Kart::Kart(ShaderProgramPtr shader_program, const MaterialPtr &material,
     axle_front_right->setGlobalTransform(getTranslationMatrix(-tire_front_right_origin));
     axle_front_left->setGlobalTransform(getTranslationMatrix(-tire_front_left_origin));
 
-    ADD_CHILD_MESH(canon, main_texture, this->car);
-    ADD_CHILD_MESH(chain, main_texture, this->car);
-    ADD_CHILD_MESH(eyes, eyes_texture, this->car);
-    ADD_CHILD_MESH(gouvernaille, main_texture, this->car);
-    ADD_CHILD_MESH(cylinder_back, main_texture, this->car);
-    ADD_CHILD_MESH(cylinder_front, main_texture, this->car);
-    ADD_CHILD_MESH(head_back, main_texture, this->car);
-    ADD_CHILD_MESH(hair_head_back, main_texture, this->car);
-    ADD_CHILD_MESH(head_front, main_texture, this->car);
     ADD_CHILD_MESH(tire_back_right, main_texture, axle_back_right);
     ADD_CHILD_MESH(tire_back_left, main_texture, axle_back_left);
     ADD_CHILD_MESH(tire_front_right, main_texture, axle_front_right);
@@ -80,10 +76,9 @@ Kart::Kart(ShaderProgramPtr shader_program, const MaterialPtr &material,
     this->tire_front_left->setLocalTransform(getTranslationMatrix(tire_front_left_origin));
 }
 
-TexturedLightedMeshRenderablePtr Kart::getRenderable() const {
-    return this->car;
+std::shared_ptr<SkeletonRenderable> Kart::getRenderable() const {
+    return this->root;
 }
-
 
 void Kart::startRotateWheels() {
     const auto tire_roation1 = GeometricTransformation(
@@ -127,4 +122,8 @@ void Kart::startRotateWheels() {
     this->tire_front_left->addGlobalTransformKeyframe(tire_roation3, 0.5f * TIRE_ROTATION_SPEED);
     this->tire_front_left->addGlobalTransformKeyframe(tire_roation4, 0.75f * TIRE_ROTATION_SPEED);
     this->tire_front_left->addGlobalTransformKeyframe(tire_roation1, TIRE_ROTATION_SPEED);
+}
+
+TexturedLightedMeshRenderablePtr Kart::get_car() const {
+    return this->car;
 }
