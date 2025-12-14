@@ -26,6 +26,7 @@ KartPtr kart;
 
 void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart);
 
+/*
 static float camera_intro_animation(std::shared_ptr<Camera> camera) {
     camera->m_globalKeyframes.clear();
 
@@ -205,6 +206,7 @@ static void camera_animation_follow_kart(std::shared_ptr<Camera> camera, float c
     camera_animation_time += 3.0f;
     camera->addGlobalTransformKeyframe(behind_kart, camera_animation_time);
 }
+*/
 
 void initialize_scene(Viewer &viewer) {
     // Create a shader program
@@ -425,11 +427,14 @@ void initialize_scene(Viewer &viewer) {
     // Create Mystery Cube
     const std::string mystery_cube_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/mystery_cube.obj";
 
-    auto mystery_cube = std::make_shared<TexturedLightedMeshRenderable>(textureShader, mystery_cube_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/mystery_cube.jpg");
+    auto mystery_cube_1 = std::make_shared<TexturedLightedMeshRenderable>(textureShader, mystery_cube_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/mystery_cube.jpg");
+    auto mystery_cube_2 = std::make_shared<TexturedLightedMeshRenderable>(textureShader, mystery_cube_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/mystery_cube.jpg");
 
-    mystery_cube->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, 2.0f) * getScaleMatrix(0.02f));
+    mystery_cube_1->setGlobalTransform(getTranslationMatrix(1.9f, 1.4f, -20.0f) * getRotationMatrix(glm::radians(90.0f), 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.02f));
+    mystery_cube_2->setGlobalTransform(getTranslationMatrix(37.5f, 2.2f, -46.3f) * getScaleMatrix(0.02f));
 
-    viewer.addRenderable(mystery_cube);
+    viewer.addRenderable(mystery_cube_1);
+    viewer.addRenderable(mystery_cube_2);
 
 
     // Create Steel Driver (penguin kart)
@@ -477,8 +482,8 @@ int main() {
 
     glCullFace(GL_BACK);
 
-    auto camera = viewer.getCamera();
-    float camera_animation_timer = camera_intro_animation(camera);
+    //auto camera = viewer.getCamera();
+    //float camera_animation_timer = camera_intro_animation(camera);
 
     bool camera_follow_kart = false;
     bool kart_wheel_rotating = false;
@@ -487,15 +492,15 @@ int main() {
     while(viewer.isRunning()) {
         viewer.handleEvent();
 
-        const float time = viewer.getTime();
-        if (!camera_follow_kart && camera_animation_timer - time <= 0.0f) {
-            camera_animation_follow_kart(camera, camera_animation_timer);
-            camera_follow_kart = true;
-        }
-        if (!kart_wheel_rotating && time >= RACE_START_TIME - 2.0f) {
-            kart->startRotateWheels();
-            kart_wheel_rotating = true;
-        }
+        // const float time = viewer.getTime();
+        // if (!camera_follow_kart && camera_animation_timer - time <= 0.0f) {
+        //     camera_animation_follow_kart(camera, camera_animation_timer);
+        //     camera_follow_kart = true;
+        // }
+        // if (!kart_wheel_rotating && time >= RACE_START_TIME - 2.0f) {
+        //     kart->startRotateWheels();
+        //     kart_wheel_rotating = true;
+        // }
 
         viewer.animate();
         viewer.draw();
