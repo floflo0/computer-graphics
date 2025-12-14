@@ -1,11 +1,11 @@
 #pragma once
 
-#include <HierarchicalRenderable.hpp>
+#include <KeyframedHierarchicalRenderable.hpp>
 
 /**
  * Empty Renderable used to simplify animations.
  */
-class SkeletonRenderable : public HierarchicalRenderable {
+class SkeletonRenderable : public KeyframedHierarchicalRenderable {
 public:
     ~SkeletonRenderable();
     SkeletonRenderable(ShaderProgramPtr program);

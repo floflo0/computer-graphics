@@ -42,7 +42,7 @@ LightedSphereRenderablePtr leftFire;
 LightedSphereRenderablePtr middleFire;
 LightedSphereRenderablePtr rightFire;
 
-void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart);
+void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root);
 void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& steel_driver);
 void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr &bobOmb);
 
@@ -364,14 +364,14 @@ void initialize_scene(Viewer &viewer) {
                                                 glm::vec3(0.0f, 4.0f, 0.0f),
                                                 0.7f);
     // Create Kart
-    kart = std::make_shared<Kart>(textureShader, myMaterial, 0.05f);
+    kart = std::make_shared<Kart>(textureShader, myMaterial);
     kart->getRenderable()->setGlobalTransform(
         getTranslationMatrix(28.5f, 1.17f, -1.6f) *
         getRotationMatrix(-M_PI_2f, 0.0f, 1.0f, 0.0f) *
         getScaleMatrix(0.05f)
     );
     viewer.addRenderable(kart->getRenderable());
-    HierarchicalRenderable::addChild(kart->getRenderable(),
+    HierarchicalRenderable::addChild(kart->get_car(),
                                      bowser->getRenderable());
 
     // Create Penguin
@@ -466,7 +466,7 @@ void initialize_scene(Viewer &viewer) {
     auto blueShell = std::make_shared<TexturedLightedMeshRenderable>(textureShader, blueShell_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/blue-shell.png");
 
     blueShell->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -2.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
-    
+
     // Not used in the scene
     // viewer.addRenderable(blueShell);
 
@@ -511,9 +511,8 @@ void initialize_scene(Viewer &viewer) {
     auto thwomp2 = std::make_shared<TexturedLightedMeshRenderable>(textureShader, thwomp_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/thwomp3.png");
 
     const float thwomp_scale = 0.01f;
-    thwomp1->setGlobalTransform(getTranslationMatrix(-5.0f, 5.0f, 1.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(thwomp_scale));
+    thwomp1->setGlobalTransform(getTranslationMatrix(47.7f, 1.2f, -15.0f) * getScaleMatrix(thwomp_scale));
     thwomp2->setGlobalTransform(getTranslationMatrix(44.4f, 1.2f, -15.0f) * getScaleMatrix(thwomp_scale));
-
 
     thwomp_animation(thwomp1);
     thwomp_animation(thwomp2);
@@ -551,10 +550,10 @@ void initialize_scene(Viewer &viewer) {
     EulerExplicitSolverPtr solver = std::make_shared<EulerExplicitSolver>();
     system->setSolver(solver);
     system->setDt(0.01);
-    
+
     // Create a ground plane, so that particles can bounce on it
     // To adapat with the point the bob-omb will explode
-    glm::vec3 p1(40.0f, 1.9f, -47.0f); 
+    glm::vec3 p1(40.0f, 1.9f, -47.0f);
     glm::vec3 p2(30.0f, 1.9f, -47.0f);
     glm::vec3 p3(30.0f, 1.9f, -44.0f);
     glm::vec3 p4(40.0f, 1.9f, -44.0f);
@@ -573,7 +572,7 @@ void initialize_scene(Viewer &viewer) {
     */
 
     auto kartRenderable = kart->getRenderable();
-    kartBowser_animation(viewer, kartRenderable);
+    kartBowser_animation(kartRenderable);
     kartPenguin_animation(viewer, steel_driver);
 
     movingBobomb(viewer, bobOmb);
@@ -598,7 +597,7 @@ int main() {
     glCullFace(GL_BACK);
 
     auto camera = viewer.getCamera();
-    // float camera_animation_timer = camera_intro_animation(camera);
+    float camera_animation_timer = camera_intro_animation(camera);
 
     bool camera_follow_kart = false;
     bool kart_wheel_rotating = false;
@@ -650,14 +649,14 @@ int main() {
 //----------------------------------Animation du Bowser-------------------------------------------------
 //------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------
-void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart) {
-    const float scale = 0.05f;
+void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
     float epsilon = 0.0001f;
 
     float animation_time = 0.0f;
+    const float scale = 0.05f;
 
     // 1st straight line
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {28.5f, 1.17f, -1.6f},
             glm::angleAxis(-M_PI_2f, glm::vec3(0, 1, 0)),
@@ -668,7 +667,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     // Don't move until the race starts.
     animation_time += 15.0f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {28.5f, 1.17f, -1.6f},
             glm::angleAxis(-M_PI_2f, glm::vec3(0, 1, 0)),
@@ -678,7 +677,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 1.0f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {12.0f, 1.17f, -1.4f},
             glm::angleAxis(-M_PI_2f, glm::vec3(0, 1, 0)),
@@ -688,7 +687,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.8f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {7.0f, 1.17f, -1.6f},
             glm::angleAxis(glm::radians(250.0f), glm::vec3(0, 1, 0)),
@@ -700,7 +699,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // first right turn
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {5.5f, 1.17f, -2.8f},
             glm::angleAxis(glm::radians(230.0f), glm::vec3(0, 1, 0)),
@@ -710,7 +709,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {3.8f, 1.17f, -4.5f},
             glm::angleAxis(glm::radians(210.0f), glm::vec3(0, 1, 0)),
@@ -720,7 +719,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {2.0f, 1.17f, -5.9f},
             glm::angleAxis(glm::radians(190.0f), glm::vec3(0, 1, 0)),
@@ -730,7 +729,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {0.5f, 1.17f, -8.4f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
@@ -740,7 +739,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {0.5f, 1.17f, -10.0f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
@@ -752,7 +751,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // second straight line
 
     animation_time += 1.0f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {0.8f, 1.17f, -20.0f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
@@ -762,7 +761,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 1.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {0.8f, 1.17f, -30.0f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
@@ -774,7 +773,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // second left turn
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {2.0f, 1.17f, -32.0f},
             glm::angleAxis(glm::radians(160.0f), glm::vec3(0, 1, 0)),
@@ -784,7 +783,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {3.5f, 1.17f, -34.0f},
             glm::angleAxis(glm::radians(140.0f), glm::vec3(0, 1, 0)),
@@ -794,7 +793,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {5.0f, 1.0f, -35.5f},
             glm::angleAxis(glm::radians(120.0f), glm::vec3(0, 1, 0)),
@@ -804,7 +803,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {7.0f, 0.85f, -36.0f},
             glm::angleAxis(glm::radians(100.0f), glm::vec3(0, 1, 0)),
@@ -814,7 +813,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {9.0f, 0.8f, -36.2f},
             glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
@@ -826,7 +825,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // third straight line
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {11.0f, 0.85f, -36.2f},
             glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
@@ -836,7 +835,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {13.0f, 0.75f, -37.0f},
             glm::angleAxis(glm::radians(80.0f), glm::vec3(0, 1, 0)),
@@ -846,7 +845,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.4f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {18.0f, 0.65f, -38.0f},
             glm::angleAxis(glm::radians(70.0f), glm::vec3(0, 1, 0)),
@@ -858,7 +857,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // third right turn (Bowser falls off the track here)
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {20.0f, 0.4f, -38.0f},
             glm::angleAxis(glm::radians(60.0f), glm::vec3(0, 1, 0)),
@@ -868,7 +867,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {22.0f, -1.0f, -38.0f},
             glm::angleAxis(glm::radians(45.0f), glm::vec3(0, 1, 0)),
@@ -878,7 +877,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {22.0f, -3.0f, -38.0f},
             glm::angleAxis(glm::radians(30.0f), glm::vec3(0, 1, 0)),
@@ -888,7 +887,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {22.0f, -6.0f, -38.0f},
             glm::angleAxis(glm::radians(15.0f), glm::vec3(0, 1, 0)),
@@ -899,7 +898,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
 
     animation_time += 1.4f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {22.0f, -120.0f, -38.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
@@ -913,7 +912,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // Letting some time for Lakitu to put the kart back on the track
 
     animation_time += 6.0f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {21.0f, 0.4f, -38.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
@@ -923,7 +922,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 10e-6;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {21.0f, 0.4f, -38.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
@@ -935,7 +934,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // straight line
 
     animation_time += 0.4f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {21.0f, 0.4f, -32.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
@@ -945,7 +944,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.4f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {20.0f, 0.4f, -30.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
@@ -955,7 +954,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 1.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {19.5f, 0.4f, -20.0f},
             glm::angleAxis(glm::radians(10.0f), glm::vec3(0, 1, 0)),
@@ -968,7 +967,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // left turn
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {19.0f, 0.4f, -19.0f},
             glm::angleAxis(glm::radians(15.0f), glm::vec3(0, 1, 0)),
@@ -978,7 +977,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {20.0f, 0.4f, -17.5f},
             glm::angleAxis(glm::radians(30.0f), glm::vec3(0, 1, 0)),
@@ -988,7 +987,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {21.0f, 0.4f, -16.5f},
             glm::angleAxis(glm::radians(70.0f), glm::vec3(0, 1, 0)),
@@ -998,7 +997,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {22.5f, 0.4f, -15.0f},
             glm::angleAxis(glm::radians(80.0f), glm::vec3(0, 1, 0)),
@@ -1008,7 +1007,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {24.0f, 0.4f, -14.0f},
             glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
@@ -1018,7 +1017,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {25.5, 0.4f, -15.5f},
             glm::angleAxis(glm::radians(110.0f), glm::vec3(0, 1, 0)),
@@ -1030,7 +1029,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // Drift into ramp
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {27.3f, 0.4f, -17.0f},
             glm::angleAxis(glm::radians(120.0f), glm::vec3(0, 1, 0)),
@@ -1040,7 +1039,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {28.0f, 1.0f, -19.0f},
             glm::angleAxis(glm::radians(130.0f), glm::vec3(0, 1, 0)),
@@ -1050,7 +1049,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {29.0f, 1.2f, -20.0f},
             glm::angleAxis(glm::radians(150.0f), glm::vec3(0, 1, 0)),
@@ -1060,7 +1059,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {30.0f, 1.0f, -21.0f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
@@ -1072,7 +1071,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // landing after the ramp
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {31.0f, 0.65f, -23.0f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
@@ -1082,7 +1081,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {32.0f, 0.73f, -25.0f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
@@ -1092,7 +1091,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {33.0f, 0.8f, -26.0f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
@@ -1102,7 +1101,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {33.0f, 0.9f, -27.0f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
@@ -1114,7 +1113,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // straight line
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {33.0f, 1.0f, -29.0f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
@@ -1124,7 +1123,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 1.0f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {33.0f, 1.5f, -39.0f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
@@ -1134,7 +1133,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.4f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {32.0f, 1.8f, -44.0f},
             glm::angleAxis(glm::radians(170.0f), glm::vec3(0, 1, 0)),
@@ -1144,7 +1143,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {33.0f, 1.9f, -46.0f},
             glm::angleAxis(glm::radians(150.0f), glm::vec3(0, 1, 0)),
@@ -1156,7 +1155,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // right turn
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {34.0f, 1.9f, -46.5f},
             glm::angleAxis(glm::radians(130.0f), glm::vec3(0, 1, 0)),
@@ -1166,7 +1165,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {35.0f, 1.9f, -47.0f},
             glm::angleAxis(glm::radians(110.0f), glm::vec3(0, 1, 0)),
@@ -1176,7 +1175,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {36.5f, 1.9f, -47.5f},
             glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
@@ -1188,7 +1187,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // straight line
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {40.0f, 1.9f, -47.0f},
             glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
@@ -1198,7 +1197,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.6f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {42.5f, 1.9f, -47.0f},
             glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
@@ -1210,7 +1209,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // right turn
 
     animation_time += 0.3f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {44.5f, 1.8f, -46.0f},
             glm::angleAxis(glm::radians(70.0f), glm::vec3(0, 1, 0)),
@@ -1220,7 +1219,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.3f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {45.5f, 1.7f, -45.0f},
             glm::angleAxis(glm::radians(50.0f), glm::vec3(0, 1, 0)),
@@ -1230,7 +1229,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.3f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {46.0f, 1.65f, -43.0f},
             glm::angleAxis(glm::radians(30.0f), glm::vec3(0, 1, 0)),
@@ -1240,7 +1239,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {46.0f, 1.4f, -41.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
@@ -1256,7 +1255,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // straight line until ramp
 
     animation_time += 1.0f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {46.0f, 1.3f, -30.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
@@ -1266,7 +1265,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.5f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {46.0f, 1.3f, -25.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
@@ -1276,7 +1275,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.5f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {46.0f, 1.58f, -21.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
@@ -1289,7 +1288,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // ramp jump
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {46.0f, 3.5f, -16.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
@@ -1299,7 +1298,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.4f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {46.0f, 1.3f, -10.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
@@ -1311,7 +1310,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // landing after ramp
 
     animation_time += 0.4f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {46.0f, 1.3f, -8.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
@@ -1323,7 +1322,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // right turn
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {46.1f, 1.17f, -6.0f},
             glm::angleAxis(glm::radians(350.0f), glm::vec3(0,1,0)),
@@ -1333,7 +1332,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {45.5f, 1.17f, -4.0f},
             glm::angleAxis(glm::radians(330.0f), glm::vec3(0,1,0)),
@@ -1343,7 +1342,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {44.0f, 1.17f, -3.0f},
             glm::angleAxis(glm::radians(310.0f), glm::vec3(0,1,0)),
@@ -1353,7 +1352,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     animation_time += 0.2f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {42.0f, 1.17f, -1.8f},
             glm::angleAxis(glm::radians(285.0f), glm::vec3(0,1,0)),
@@ -1365,7 +1364,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // straight line back to the start
 
     animation_time += 1.9f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {28.5f, 1.17f, -1.6f},
             glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
@@ -1382,7 +1381,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     // MUSHROOM BOOST AT THE START OF THE LAP
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {12.5f, 1.17f, -1.45f},
             glm::angleAxis(-M_PI_2f, glm::vec3(0,1,0)),
@@ -1393,7 +1392,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     // First right turn
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {6.0f, 1.17f, -2.5f},
             glm::angleAxis(glm::radians(235.0f), glm::vec3(0,1,0)),
@@ -1402,7 +1401,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 1.2f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {2.5f, 1.17f, -6.0f},
             glm::angleAxis(glm::radians(195.0f), glm::vec3(0,1,0)),
@@ -1413,7 +1412,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     // second straight line
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {1.0f, 1.17f, -20.0f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0,1,0)),
@@ -1422,7 +1421,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 2.6f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {1.0f, 1.17f, -28.0f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
@@ -1433,7 +1432,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     // second left turn
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {3.5f, 1.17f, -34.0f},
             glm::angleAxis(glm::radians(140.0f), glm::vec3(0,1,0)),
@@ -1442,7 +1441,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 4.2f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {6.0f, 0.85f, -36.0f},
             glm::angleAxis(glm::radians(100.0f), glm::vec3(0,1,0)),
@@ -1451,7 +1450,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 4.6f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {9.0f, 0.8f, -36.2f},
             glm::angleAxis(glm::radians(90.0f), glm::vec3(0,1,0)),
@@ -1462,7 +1461,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     // third straight line
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {13.0f, 0.75f, -37.0f},
             glm::angleAxis(glm::radians(90.0f), glm::vec3(0,1,0)),
@@ -1471,7 +1470,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 5.2f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {18.0f, 0.65f, -38.0f},
             glm::angleAxis(glm::radians(90.0f), glm::vec3(0,1,0)),
@@ -1482,7 +1481,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     // third left turn
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {20.0f, 0.4f, -35.5f},
             glm::angleAxis(glm::radians(80.0f), glm::vec3(0,1,0)),
@@ -1491,7 +1490,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 6.2f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {21.0f, 0.4f, -33.5f},
             glm::angleAxis(glm::radians(40.0f), glm::vec3(0,1,0)),
@@ -1500,7 +1499,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 6.4f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {21.5f, 0.5f, -30.0f},
             glm::angleAxis(glm::radians(20.0f), glm::vec3(0,1,0)),
@@ -1511,7 +1510,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     // straight line (little bump)
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {21.5f, 0.6f, -28.5f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0,1,0)),
@@ -1520,7 +1519,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 6.8f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {21.5f, 0.8f, -27.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0,1,0)),
@@ -1529,7 +1528,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 7.0f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {21.5f, 0.4f, -25.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0,1,0)),
@@ -1538,7 +1537,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 7.2f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {21.0f, 0.4f, -20.0f},
             glm::angleAxis(glm::radians(10.0f), glm::vec3(0, 1, 0)),
@@ -1549,7 +1548,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     // left turn
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {20.0f, 0.4f, -17.0f},
             glm::angleAxis(glm::radians(15.0f), glm::vec3(0, 1, 0)),
@@ -1558,7 +1557,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 7.9f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {20.0f, 0.4f, -17.5f},
             glm::angleAxis(glm::radians(30.0f), glm::vec3(0, 1, 0)),
@@ -1567,7 +1566,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 8.2f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {21.0f, 0.4f, -16.5f},
             glm::angleAxis(glm::radians(70.0f), glm::vec3(0, 1, 0)),
@@ -1576,7 +1575,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 8.4f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {22.5f, 0.4f, -15.0f},
             glm::angleAxis(glm::radians(80.0f), glm::vec3(0, 1, 0)),
@@ -1585,7 +1584,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 8.6f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {24.5f, 0.4f, -14.0f},
             glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
@@ -1597,7 +1596,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // TODO INSERT RED SHELL HIT ANIMATION HERE
     // red shell hit Bowser here, making him stop + spin for a bit
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {26.5f, 0.4f, -14.3f},
             glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
@@ -1606,7 +1605,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 9.0f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {27.2f, 0.4f, -14.3f},
             glm::angleAxis(glm::radians(130.0f), glm::vec3(0, 1, 0)),
@@ -1615,7 +1614,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 9.1f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {27.8f, 0.4f, -14.3f},
             glm::angleAxis(glm::radians(170.0f), glm::vec3(0, 1, 0)),
@@ -1624,7 +1623,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 9.2f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {28.4f, 0.4f, -14.3f},
             glm::angleAxis(glm::radians(210.0f), glm::vec3(0, 1, 0)),
@@ -1633,7 +1632,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 9.3f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {29.1f, 0.4f, -14.3f},
             glm::angleAxis(glm::radians(240.0f), glm::vec3(0, 1, 0)),
@@ -1642,7 +1641,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 9.4f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {29.8f, 0.4f, -14.3f},
             glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
@@ -1651,7 +1650,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 9.5f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {30.4f, 0.4f, -14.3f},
             glm::angleAxis(glm::radians(310.0f), glm::vec3(0, 1, 0)),
@@ -1660,7 +1659,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 9.6f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {30.9f, 0.4f, -14.3f},
             glm::angleAxis(glm::radians(350.0f), glm::vec3(0, 1, 0)),
@@ -1669,7 +1668,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 9.7f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {31.5f, 0.4f, -14.3f},
             glm::angleAxis(glm::radians(30.0f), glm::vec3(0, 1, 0)),
@@ -1678,7 +1677,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 9.8f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {32.0f, 0.4f, -14.3f},
             glm::angleAxis(glm::radians(70.0f), glm::vec3(0, 1, 0)),
@@ -1687,7 +1686,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 9.9f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {32.0f, 0.4f, -14.3f},
             glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
@@ -1696,7 +1695,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 10.0f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {32.0f, 0.4f, -14.3f},
             glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
@@ -1708,7 +1707,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     // left turn (static)
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {32.0f, 0.4f, -14.3f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
@@ -1719,7 +1718,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
      // straight line after the red shell hit, low speed
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {32.0f, 0.5f, -20.0f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
@@ -1728,7 +1727,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 16.0f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {31.5f, 1.8f, -43.0f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
@@ -1737,7 +1736,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 20.0f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {31.5f, 1.9f, -45.0f},
             glm::angleAxis(glm::radians(170.0f), glm::vec3(0, 1, 0)),
@@ -1748,7 +1747,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     // right turn
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {33.5f, 1.9f, -46.0f},
             glm::angleAxis(glm::radians(150.0f), glm::vec3(0, 1, 0)),
@@ -1757,7 +1756,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 20.6f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {35.0f, 1.9f, -46.2f},
             glm::angleAxis(glm::radians(120.0f), glm::vec3(0, 1, 0)),
@@ -1766,7 +1765,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 21.0f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {37.0f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
@@ -1778,7 +1777,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // TODO ADD BOB-OMB HIT ANIMATION HERE
     // straight line + bob-omb
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {37.5f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
@@ -1787,7 +1786,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 21.6f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {38.0f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
@@ -1796,7 +1795,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 21.7f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {38.5f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(130.0f), glm::vec3(0, 1, 0)),
@@ -1805,7 +1804,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 21.8f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {39.0f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(170.0f), glm::vec3(0, 1, 0)),
@@ -1814,7 +1813,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 21.9f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {39.5f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(210.0f), glm::vec3(0, 1, 0)),
@@ -1823,7 +1822,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 22.0f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {40.0f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(240.0f), glm::vec3(0, 1, 0)),
@@ -1832,7 +1831,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 22.1f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {40.5f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
@@ -1841,7 +1840,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 22.2f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {41.0f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(310.0f), glm::vec3(0, 1, 0)),
@@ -1850,7 +1849,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 22.3f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {41.6f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(350.0f), glm::vec3(0, 1, 0)),
@@ -1859,7 +1858,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 22.4f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {42.1f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(30.0f), glm::vec3(0, 1, 0)),
@@ -1868,7 +1867,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 22.5f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {42.6f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(70.0f), glm::vec3(0, 1, 0)),
@@ -1877,7 +1876,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 22.6f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {43.1f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
@@ -1886,7 +1885,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 22.7f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {43.6f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(110.0f), glm::vec3(0, 1, 0)),
@@ -1895,7 +1894,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 22.8f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {44.1f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(130.0f), glm::vec3(0, 1, 0)),
@@ -1904,7 +1903,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 22.9f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {44.5f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(150.0f), glm::vec3(0, 1, 0)),
@@ -1913,7 +1912,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 23.0f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {44.9f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(170.0f), glm::vec3(0, 1, 0)),
@@ -1922,7 +1921,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 23.1f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {45.2f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(190.0f), glm::vec3(0, 1, 0)),
@@ -1931,7 +1930,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 23.2f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {45.5f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(210.0f), glm::vec3(0, 1, 0)),
@@ -1940,7 +1939,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 23.3f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {45.7f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(230.0f), glm::vec3(0, 1, 0)),
@@ -1949,7 +1948,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 23.4f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {45.9f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(250.0f), glm::vec3(0, 1, 0)),
@@ -1959,7 +1958,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     // stop time
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {45.9f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(250.0f), glm::vec3(0, 1, 0)),
@@ -1970,7 +1969,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     // turn left (static)
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {45.9f, 1.9f, -46.8f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
@@ -1981,7 +1980,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     // straight line
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {45.8f, 1.3f, -25.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
@@ -1993,7 +1992,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     // TODO ADD A BANANA BEFORE THE RAMP
     // Banana before the ramp, Bowser dodges it
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {47.3f, 1.3f, -23.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
@@ -2002,7 +2001,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 32.8f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {47.3f, 1.3f, -15.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
@@ -2011,7 +2010,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 34.1f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {47.1f, 1.3f, -11.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
@@ -2020,7 +2019,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 34.5f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {46.0f, 1.3f, -8.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
@@ -2032,7 +2031,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     // right turn
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {45.9f, 1.17f, -6.0f},
             glm::angleAxis(glm::radians(350.0f), glm::vec3(0,1,0)),
@@ -2041,7 +2040,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 36.0f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {45.4f, 1.17f, -4.0f},
             glm::angleAxis(glm::radians(330.0f), glm::vec3(0,1,0)),
@@ -2050,7 +2049,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 36.2f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {43.9f, 1.17f, -3.0f},
             glm::angleAxis(glm::radians(310.0f), glm::vec3(0,1,0)),
@@ -2059,7 +2058,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 36.4f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {42.0f, 1.17f, -1.8f},
             glm::angleAxis(glm::radians(285.0f), glm::vec3(0,1,0)),
@@ -2068,7 +2067,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         lap2_start_time + 36.6f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {39.9f, 1.17f, -1.6f},
             glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
@@ -2079,7 +2078,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     // straight line (a billball stamps on Bowser)
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {35.5f, 1.17f, -1.6f},
             glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
@@ -2090,29 +2089,63 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
 
     //  TODO INSERT BILLBALL HERE
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {35.4f, 1.17f, -1.6f},
             glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
-            {scale, scale/5, scale}
+            glm::vec3(scale)
         ),
         lap2_start_time + 37.6f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {20.5f, 1.17f, -1.6f},
             glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
-            {scale, scale/5, scale}
+            glm::vec3(scale)
         ),
         lap2_start_time + 44.6f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {20.5f, 1.17f, -1.6f},
             glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
-            {scale, scale/5, scale}
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 50.0f
+    );
+
+    auto car = kart->get_car();
+    car->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            glm::vec3(0.0f),
+            qY(0.0f),
+            glm::vec3(1.0f)
+        ),
+        0.0f
+    );
+    car->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            glm::vec3(0.0f),
+            qY(0.0f),
+            glm::vec3(1.0f)
+        ),
+        lap2_start_time + 37.6f
+    );
+    car->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            glm::vec3(0.0f),
+            qY(0.0f),
+            glm::vec3(1.0f, 0.2f, 1.0f)
+        ),
+        lap2_start_time + 37.6f + 10e-6
+    );
+    car->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            glm::vec3(0.0f),
+            qY(0.0f),
+            glm::vec3(1.0f, 0.2f, 1.0f)
         ),
         lap2_start_time + 50.0f
     );
@@ -2245,7 +2278,7 @@ void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr& bobOmbRender
 
     bobOmbRenderable->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {37.5f, 2.3f, -46.8f},   
+            {37.5f, 2.3f, -46.8f},
             qY(5.0f),
             glm::vec3(epsilonScale) // Scales down to disappear
         ),
@@ -2466,7 +2499,7 @@ void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& ste
         animation_time
     );
 
-    // right turn 
+    // right turn
 
     animation_time += 0.2f;
     steel_driver->addGlobalTransformKeyframe(
@@ -2498,7 +2531,7 @@ void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& ste
         animation_time
     );
 
-    // straight line 
+    // straight line
 
     animation_time += 0.4f;
     steel_driver->addGlobalTransformKeyframe(
@@ -2508,7 +2541,7 @@ void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& ste
             glm::vec3(scale)
         ),
         animation_time
-    );      
+    );
 
     animation_time += 0.8f;
     steel_driver->addGlobalTransformKeyframe(
@@ -2520,7 +2553,7 @@ void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& ste
         animation_time
     );
 
-    // left turn 
+    // left turn
 
     animation_time += 0.2f;
     steel_driver->addGlobalTransformKeyframe(
