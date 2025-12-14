@@ -440,7 +440,7 @@ void initialize_scene(Viewer &viewer) {
     auto mystery_cube_2 = std::make_shared<TexturedLightedMeshRenderable>(textureShader, mystery_cube_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/mystery_cube.jpg");
 
     mystery_cube_1->setGlobalTransform(getTranslationMatrix(1.9f, 1.4f, -20.0f) * getRotationMatrix(glm::radians(90.0f), 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.02f));
-    mystery_cube_2->setGlobalTransform(getTranslationMatrix(37.5f, 2.2f, -46.3f) * getScaleMatrix(0.02f));
+    mystery_cube_2->setGlobalTransform(getTranslationMatrix(46.0f, 1.5f, -30.0f) * getScaleMatrix(0.02f));
 
     viewer.addRenderable(mystery_cube_1);
     viewer.addRenderable(mystery_cube_2);
