@@ -2,9 +2,17 @@
 #include <FrameRenderable.hpp>
 #include <MeshRenderable.hpp>
 #include <ShaderProgram.hpp>
+#include <cstdio>
+#include <GeometricTransformation.hpp>
+#include <FrameRenderable.hpp>
+#include <Utils.hpp>
 #include <memory>
 #include <texturing/TexturedMeshRenderable.hpp>
 #include <Viewer.hpp>
+
+#include <dynamics/BobOmbExplosion.hpp>
+#include <dynamics/EulerExplicitSolver.hpp>
+
 #include <lighting/LightedMeshRenderable.hpp>
 #include <lighting/LightedCubeRenderable.hpp>
 #include <lighting/LightedCylinderRenderable.hpp>
@@ -12,12 +20,11 @@
 #include <lighting/DirectionalLightRenderable.hpp>
 #include <lighting/PointLightRenderable.hpp>
 #include <lighting/SpotLightRenderable.hpp>
-#include <FrameRenderable.hpp>
 #include <lighting/Material.hpp>
+
 #include <texturing/CubeMapRenderable.hpp>
 #include <texturing/TexturedLightedMeshRenderable.hpp>
-#include <GeometricTransformation.hpp>
-#include <Utils.hpp>
+#include <texturing/TexturedMeshRenderable.hpp>
 
 #include "bowser.hpp"
 #include "kart.hpp"
@@ -25,6 +32,7 @@
 #define RACE_START_TIME 15.0f  // seconds
 
 KartPtr kart;
+TexturedLightedMeshRenderablePtr steel_driver;
 
 MaterialPtr redMat;
 MaterialPtr greenMat;
@@ -35,6 +43,12 @@ LightedSphereRenderablePtr middleFire;
 LightedSphereRenderablePtr rightFire;
 
 void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart);
+void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& steel_driver);
+void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr &bobOmb);
+
+float lap2_start_time;
+
+
 
 static float camera_intro_animation(std::shared_ptr<Camera> camera) {
     camera->m_globalKeyframes.clear();
@@ -265,20 +279,28 @@ void initialize_scene(Viewer &viewer) {
 
 
     //lumières directionnelles (globale)
-    glm::vec3 d_direction = glm::normalize(glm::vec3(0.0,-1.0,-1.0));
-    glm::vec3 d_ambient(5.0,5.0,5.0), d_diffuse(0.3,0.3,0.1), d_specular(0.3,0.3,0.1);
-    //glm::vec3 d_ambient(0.0,0.0,0.0), d_diffuse(0.0,0.0,0.0), d_specular(0.0,0.0,0.0);
-    glm::vec3 lightPosition(0.0,5.0,8.0);
-    DirectionalLightPtr directionalLight = std::make_shared<DirectionalLight>(d_direction, d_ambient, d_diffuse, d_specular);
-    directionalLight->setGlobalTransform(getTranslationMatrix(lightPosition) * directionalLight->getGlobalTransform());
+    glm::vec3 d_ambient(2.0f), d_diffuse(1.0f), d_specular(0.5f);
 
-    viewer.addDirectionalLight(directionalLight);
+    glm::vec3 d_direction1 = glm::normalize(glm::vec3(-1.0,-1.0,0.0));
+    DirectionalLightPtr directionalLight1 = std::make_shared<DirectionalLight>(d_direction1, d_ambient, d_diffuse, d_specular);
 
-    //Ajout d'un matériel pour nos objets 3D
-    glm::vec3 mAmbient(0.0), mDiffuse(0.0), mSpecular(0.0);
-    float mShininess=0.0;
+    glm::vec3 d_direction2 = glm::normalize(glm::vec3(0.0,-1.0,-1.0));
+    DirectionalLightPtr directionalLight2 = std::make_shared<DirectionalLight>(d_direction2, d_ambient, d_diffuse, d_specular);
+
+    glm::vec3 d_direction3 = glm::normalize(glm::vec3(1.0,-1.0,0.0));
+    DirectionalLightPtr directionalLight3 = std::make_shared<DirectionalLight>(d_direction3, d_ambient, d_diffuse, d_specular);
+
+    viewer.addDirectionalLight(directionalLight1);
+    viewer.addDirectionalLight(directionalLight2);
+    viewer.addDirectionalLight(directionalLight3);
+
     // MaterialPtr myMaterial = std::make_shared<Material>(mAmbient, mDiffuse, mSpecular, mShininess);
-    MaterialPtr myMaterial = Material::Bronze();
+    MaterialPtr myMaterial = std::make_shared<Material>(
+            glm::vec3(0.05f), // ambient
+            glm::vec3(0.15f), // diffuse
+            glm::vec3(1.0f),  // specular
+            1.0f
+        );
 
 
     //------------------Gestion du départ (feu + lakitu)-----------------------------
@@ -362,7 +384,7 @@ void initialize_scene(Viewer &viewer) {
     );
     // Create Steel Driver (penguin kart)
     const std::string steel_driver_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/steel_driver.obj";
-    TexturedLightedMeshRenderablePtr steel_driver = std::make_shared<TexturedLightedMeshRenderable>(textureShader, steel_driver_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/steel_driver.png");
+    steel_driver = std::make_shared<TexturedLightedMeshRenderable>(textureShader, steel_driver_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/steel_driver.png");
 
     steel_driver->setGlobalTransform(
         getTranslationMatrix(30.0f, 1.3f, -0.6f) *
@@ -373,6 +395,7 @@ void initialize_scene(Viewer &viewer) {
     HierarchicalRenderable::addChild(steel_driver,
                                      penguin);
 
+    /*
     // Create Pianta
     const std::string pianta_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/pianta.obj";
     TexturedLightedMeshRenderablePtr pianta = std::make_shared<TexturedLightedMeshRenderable>(textureShader, pianta_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/pianta.png");
@@ -393,6 +416,7 @@ void initialize_scene(Viewer &viewer) {
     viewer.addRenderable(tri_speeder);
     HierarchicalRenderable::addChild(tri_speeder,
                                      pianta);
+    */
 
     //---------------------------------Placement des autres objets------------------------------------
 
@@ -424,7 +448,8 @@ void initialize_scene(Viewer &viewer) {
 
     lightning->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -3.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
 
-    viewer.addRenderable(lightning);
+    // Not used in the scene
+    // viewer.addRenderable(lightning);
 
     // Create Mushroom
     const std::string mushroom_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/mushroom.obj";
@@ -441,8 +466,9 @@ void initialize_scene(Viewer &viewer) {
     auto blueShell = std::make_shared<TexturedLightedMeshRenderable>(textureShader, blueShell_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/blue-shell.png");
 
     blueShell->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -2.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
-
-    viewer.addRenderable(blueShell);
+    
+    // Not used in the scene
+    // viewer.addRenderable(blueShell);
 
     // Create Star Trophy
     const std::string stars_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/trophy/stars.obj";
@@ -460,10 +486,13 @@ void initialize_scene(Viewer &viewer) {
     metal->setGlobalTransform(getTranslationMatrix(-5.0f, -0.5f, -1.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.8f));
     woodPanel->setGlobalTransform(getTranslationMatrix(-5.0f, -0.5f, -1.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.8f));
 
+    // Not used in the scene
+    /*
     viewer.addRenderable(stars);
     viewer.addRenderable(matMetal);
     viewer.addRenderable(metal);
     viewer.addRenderable(woodPanel);
+    */
 
     // Create Star
     const std::string star_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/star.obj";
@@ -472,7 +501,8 @@ void initialize_scene(Viewer &viewer) {
 
     star->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, 0.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.2f));
 
-    viewer.addRenderable(star);
+    // Not used in the scene
+    // viewer.addRenderable(star);
 
     // Create Thwomp
     const std::string thwomp_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/thwomp.obj";
@@ -494,23 +524,49 @@ void initialize_scene(Viewer &viewer) {
     // Create Mystery Cube
     const std::string mystery_cube_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/mystery_cube.obj";
 
-    auto mystery_cube = std::make_shared<TexturedLightedMeshRenderable>(textureShader, mystery_cube_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/mystery_cube.jpg");
+    auto mystery_cube_1 = std::make_shared<TexturedLightedMeshRenderable>(textureShader, mystery_cube_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/mystery_cube.jpg");
+    auto mystery_cube_2 = std::make_shared<TexturedLightedMeshRenderable>(textureShader, mystery_cube_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/mystery_cube.jpg");
 
-    mystery_cube->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, 2.0f) * getScaleMatrix(0.02f));
+    mystery_cube_1->setGlobalTransform(getTranslationMatrix(1.9f, 1.4f, -20.0f) * getRotationMatrix(glm::radians(90.0f), 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.02f));
+    mystery_cube_2->setGlobalTransform(getTranslationMatrix(46.0f, 1.5f, -30.0f) * getScaleMatrix(0.02f));
 
-    viewer.addRenderable(mystery_cube);
+    viewer.addRenderable(mystery_cube_1);
+    viewer.addRenderable(mystery_cube_2);
 
     // Create Rainbow Road
     const std::string rainbow_path = "../../sfmlGraphicsPipeline/meshes/rainbow_road.obj";
     const std::string rainbow_texture_path = "../../sfmlGraphicsPipeline/textures/rainbow_road.png";
-    auto rainbow = std::make_shared<TexturedMeshRenderable>(
-        texShader,
+    auto rainbow = std::make_shared<TexturedLightedMeshRenderable>(
+        textureShader,
         rainbow_path,
+        myMaterial,
         rainbow_texture_path
     );
     rainbow->setGlobalTransform(getScaleMatrix(0.4f));
 
     viewer.addRenderable(rainbow);
+
+    // Initialize a dynamic system (Solver, Time step, Restitution coefficient)
+    DynamicSystemPtr system = std::make_shared<DynamicSystem>();
+    EulerExplicitSolverPtr solver = std::make_shared<EulerExplicitSolver>();
+    system->setSolver(solver);
+    system->setDt(0.01);
+    
+    // Create a ground plane, so that particles can bounce on it
+    // To adapat with the point the bob-omb will explode
+    glm::vec3 p1(40.0f, 1.9f, -47.0f); 
+    glm::vec3 p2(30.0f, 1.9f, -47.0f);
+    glm::vec3 p3(30.0f, 1.9f, -44.0f);
+    glm::vec3 p4(40.0f, 1.9f, -44.0f);
+
+    PlanePtr groundQuad = std::make_shared<Plane>(p1, p2, p3);
+    system->addPlaneObstacle(groundQuad);
+
+    // Create a renderable associated to the dynamic system
+    // This renderable is responsible for calling DynamicSystem::computeSimulationStep() in the animate() function
+    // It is also responsible for some of the key/mouse events
+    DynamicSystemRenderablePtr systemRenderable = std::make_shared<DynamicSystemRenderable>(system);
+    viewer.addRenderable(systemRenderable);
 
     /*
     ANIMATIONS START HERE
@@ -518,6 +574,19 @@ void initialize_scene(Viewer &viewer) {
 
     auto kartRenderable = kart->getRenderable();
     kartBowser_animation(viewer, kartRenderable);
+    kartPenguin_animation(viewer, steel_driver);
+
+    movingBobomb(viewer, bobOmb);
+
+    auto bobOmbExplosion = std::make_shared<BobOmbExplosion>(
+        system,
+        lap2_start_time + 21.4f,                  // trigger time of the explosion
+        lap2_start_time + 21.4f + 5.0f,           // trigger time of deletion of particles
+        bobOmb,
+        systemRenderable,
+        &viewer                                   // pass pointer to viewer
+    );
+    viewer.addRenderable(bobOmbExplosion);
 }
 
 int main() {
@@ -529,7 +598,7 @@ int main() {
     glCullFace(GL_BACK);
 
     auto camera = viewer.getCamera();
-    float camera_animation_timer = camera_intro_animation(camera);
+    // float camera_animation_timer = camera_intro_animation(camera);
 
     bool camera_follow_kart = false;
     bool kart_wheel_rotating = false;
@@ -538,6 +607,8 @@ int main() {
 
     while(viewer.isRunning()) {
         viewer.handleEvent();
+
+        //printf("%f, %f, %f \n", camera->getPosition().x, camera->getPosition().y, camera->getPosition().z);
 
         const float time = viewer.getTime();
 
@@ -574,6 +645,11 @@ int main() {
     return EXIT_SUCCESS;
 }
 
+//------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
+//----------------------------------Animation du Bowser-------------------------------------------------
+//------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
 void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart) {
     const float scale = 0.05f;
     float epsilon = 0.0001f;
@@ -779,7 +855,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
         animation_time
     );
 
-    // third left turn (Bowser falls off the track here)
+    // third right turn (Bowser falls off the track here)
 
     animation_time += 0.2f;
     kart->addGlobalTransformKeyframe(
@@ -1302,7 +1378,7 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     2nd ROUND
     */
 
-    float lap2_start_time = animation_time;
+    lap2_start_time = animation_time;
 
     // MUSHROOM BOOST AT THE START OF THE LAP
 
@@ -2042,4 +2118,542 @@ void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart
     );
 
     // Finish line yayyy
+}
+
+//------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
+//----------------------------------Animation du bob-omb------------------------------------------------
+//------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
+
+void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr& bobOmbRenderable)
+{
+    const float scale = 0.1f;
+    constexpr float epsilonScale = 0.0001f;
+
+    // Hide de bob-omb at the beginning
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {32.0f, 0.8f, -35.0f},
+            qY(-2.2f),
+            glm::vec3(epsilonScale)
+        ),
+        lap2_start_time + 0.0f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {32.0f, 0.8f, -35.0f},
+            qY(-2.2f),
+            glm::vec3(epsilonScale)
+        ),
+        lap2_start_time + 18.39f
+    );
+
+    // Bob-omb appears + balistic movement
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {32.0f, 0.8f, -35.0f},
+            qY(-2.2f),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 18.4f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {33.5f, 2.8f, -37.8f},
+            qY(-2.0f),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 18.6f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {34.0f, 4.5f, -40.5f},
+            qY(-1.7f),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 18.8f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {34.6f, 5.9f, -43.2f},
+            qY(-1.4f),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 19.0f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {35.8f, 5.6f, -45.0f},
+            qY(-1.1f),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 19.2f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {36.6f, 4.5f, -46.0f},
+            qY(-0.8f),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 19.4f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {37.2f, 3.05f, -46.6f},
+            qY(-0.4f),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 19.6f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {37.5f, 2.35f, -46.8f},
+            qY(0.0f),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 19.8f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {37.5f, 2.3, -46.8f},
+            qY(0.0f),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 20.0f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {37.5f, 2.3f, -46.8f},
+            qY(0.0f),
+            glm::vec3(scale)
+        ),
+        lap2_start_time + 21.6f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {37.5f, 2.3f, -46.8f},   
+            qY(5.0f),
+            glm::vec3(epsilonScale) // Scales down to disappear
+        ),
+        lap2_start_time + 21.6f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {0.0f, -1000.0f, 0.0f}, // Push the bob-omb far below scene
+            qY(5.0f),
+            glm::vec3(epsilonScale)
+        ),
+        200.0f // Freeze the animation, our film won't exceed 200 seconds
+    );
+}
+
+
+
+
+//------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
+//----------------------------------Animation du pingouin-----------------------------------------------
+//------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
+
+void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& steel_driver) {
+    const float scale = 0.06f;
+    float epsilon = 0.0001f;
+
+    float animation_time = 0.0f;
+
+    // 1st straight line
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {30.0f, 1.3f, -0.6f},
+            glm::angleAxis(-M_PI_2f, glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    // Don't move until the race starts.
+    animation_time += 15.0f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {30.0f, 1.3f, -0.6f},
+            glm::angleAxis(-M_PI_2f, glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 1.0f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {15.0f, 1.3f, -1.6f},
+            glm::angleAxis(-M_PI_2f, glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.8f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {9.0f, 1.3f, -0.6f},
+            glm::angleAxis(glm::radians(250.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    // first right turn
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {7.5f, 1.3f, -1.0f},
+            glm::angleAxis(glm::radians(230.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {2.8f, 1.3f, -2.5f},
+            glm::angleAxis(glm::radians(210.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {3.0f, 1.3f, -4.0f},
+            glm::angleAxis(glm::radians(190.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {0.5f, 1.3f, -6.4f},
+            glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {0.5f, 1.3f, -8.5f},
+            glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    // second straight line
+
+    animation_time += 1.0f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {3.0f, 1.3f, -18.0f},
+            glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 1.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {3.0f, 1.3f, -25.0f},
+            glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.5f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {3.0f, 1.3f, -30.0f},
+            glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    // second left turn
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {2.0f, 1.3f, -32.0f},
+            glm::angleAxis(glm::radians(160.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {3.5f, 1.3f, -34.0f},
+            glm::angleAxis(glm::radians(140.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {6.0f, 1.1f, -35.0f},
+            glm::angleAxis(glm::radians(120.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {9.0f, 0.9f, -35.5f},
+            glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    // third straight line
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {12.0f, 0.8f, -35.5f},
+            glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.9f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {18.0f, 0.85f, -36.5f},
+            glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    // right turn 
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {20.0f, 0.7f, -38.0f},
+            glm::angleAxis(glm::radians(70.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.4f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {21.0f, 0.6f, -35.0f},
+            glm::angleAxis(glm::radians(40.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.4f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {21.5f, 0.6f, -29.0f},
+            glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    // straight line 
+
+    animation_time += 0.4f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {21.0f, 1.3f, -24.0f},
+            glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );      
+
+    animation_time += 0.8f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {20.5f, 0.6f, -20.0f},
+            glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    // left turn 
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {20.5f, 0.4f, -19.0f},
+            glm::angleAxis(glm::radians(15.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {20.8f, 0.4f, -18.5f},
+            glm::angleAxis(glm::radians(30.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {20.8f, 0.4f, -18.0f},
+            glm::angleAxis(glm::radians(45.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {21.2f, 0.4f, -17.5f},
+            glm::angleAxis(glm::radians(60.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {22.2f, 0.4f, -16.5f},
+            glm::angleAxis(glm::radians(80.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {24.0f, 0.4f, -16.2f},
+            glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    // straight line into ramp (left)
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {26.0f, 0.4f, -15.7f},
+            glm::angleAxis(glm::radians(120.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {28.0f, 1.0f, -18.0f},
+            glm::angleAxis(glm::radians(160.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    // fails ramp
+
+    animation_time += 0.3f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {28.0f, 1.0f, -18.0f},
+            glm::angleAxis(glm::radians(160.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.3f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {28.7f, 1.2f, -20.0f},
+            glm::angleAxis(glm::radians(170.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {29.4f, 1.0f, -21.0f},
+            glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {29.9f, 0.65f, -23.0f},
+            glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.2f;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {29.9f, 0.35f, -23.0f},
+            glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
 }

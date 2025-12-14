@@ -74,9 +74,6 @@ void initialize_scene(Viewer &viewer) {
     DynamicSystemRenderablePtr systemRenderable = std::make_shared<DynamicSystemRenderable>(system);
     viewer.addRenderable(systemRenderable);
 
-    // Populate the dynamic system with particles, forcefields and create renderables associated to them for visualization.
-    // Uncomment only one of the following line
-
     // Create a ground plane, so that particles can bounce on it
     // To adapat with the point the bob-omb will explode
     glm::vec3 p1(10.0f, 0.0f, 10.0f); 
@@ -110,7 +107,7 @@ void initialize_scene(Viewer &viewer) {
         &viewer                // pass pointer to viewer
     );
 
-viewer.addRenderable(bobOmbExplosion);
+    viewer.addRenderable(bobOmbExplosion);
 
 }
 
@@ -219,7 +216,7 @@ void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr& bobOmbRender
         GeometricTransformation(
             {0.0f, 0.15f, 12.6f},
             qY(5.0f),
-            glm::vec3(0.1f)
+            glm::vec3(scale)
         ),
         1.6f
     );
