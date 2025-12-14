@@ -57,6 +57,8 @@ Viewer::Viewer(float width, float height, const glm::vec4 & background_color) :
     m_lastEventHandleTime{ clock::now() },
     m_background_color{background_color}
 {
+    m_camera = std::make_shared<Camera>();
+
     m_window.setFramerateLimit(60);
     sf::ContextSettings settings = m_window.getSettings();
     LOG( info, "Settings of OPENGL Context created by SFML");
@@ -68,7 +70,7 @@ Viewer::Viewer(float width, float height, const glm::vec4 & background_color) :
 
     //Initialize the camera
     float ratio = width/height;
-    m_camera.setRatio(ratio);
+    m_camera->setRatio(ratio);
     //Set up GLEW
     initializeGL();
     //Initialize OpenGL context
@@ -143,11 +145,11 @@ void Viewer::draw()
             r->bindShaderProgram();
             int projectionLocation = r->projectionLocation();
             if(projectionLocation != ShaderProgram::null_location)
-                glcheck(glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(m_camera.projectionMatrix())));
+                glcheck(glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(m_camera->projectionMatrix())));
 
             int viewLocation = r->viewLocation();
             if(viewLocation != ShaderProgram::null_location)
-                glcheck(glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(m_camera.viewMatrix())));
+                glcheck(glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(m_camera->viewMatrix())));
 
             // Texture
             int texsamplerLocation = r->getShaderProgram()->getUniformLocation("ViewerTexSampler");
@@ -225,7 +227,7 @@ void Viewer::animate()
         for (const SpotLightPtr & sl : m_spotLights)
             sl->animate( getTime() );
 
-        m_camera.animate( getTime() );
+        m_camera->animate( getTime() );
     }
 }
 
@@ -436,14 +438,14 @@ void Viewer::mousePressEvent(sf::Event& e)
     sf::Vector2i pos_pix = sf::Mouse::getPosition(m_window);
     pos.x = 2.0f * pos_pix.x / (float) m_window.getSize().x - 1.0f;
     pos.y = 2.0f * pos_pix.y / (float) m_window.getSize().y - 1.0f;
-    m_camera.mousePress(pos);
+    m_camera->mousePress(pos);
     for(const RenderablePtr & r : m_renderables)
         r->mousePressEvent(e);
 }
 
 void Viewer::mouseReleaseEvent(sf::Event& e)
 {
-    m_camera.mouseRelease();
+    m_camera->mouseRelease();
     for(const RenderablePtr & r : m_renderables)
         r->mouseReleaseEvent(e);
 }
@@ -454,11 +456,11 @@ void Viewer::mouseWheelEvent(sf::Event& e)
     // when the wheel moved of a distance dz, the camera will be translated of dz * Z_camera
     // note: if we perform this operation inside the camera class, we avoid useless computations.
     // however, it's easier to understand that way.
-    if( m_camera.getBehavior() == Camera::ARCBALL_BEHAVIOR
-        || m_camera.getBehavior() == Camera::TRACKBALL_BEHAVIOR){
-        m_camera.setPosition( m_camera.getPosition() + 0.1f * glm::length(m_camera.getPosition()) * float(e.mouseWheel.delta) * m_camera.getForward() );
-        m_camera.updateGlobalTransform();
-        m_camera.updateModelMatrix();
+    if( m_camera->getBehavior() == Camera::ARCBALL_BEHAVIOR
+        || m_camera->getBehavior() == Camera::TRACKBALL_BEHAVIOR){
+        m_camera->setPosition( m_camera->getPosition() + 0.1f * glm::length(m_camera->getPosition()) * float(e.mouseWheel.delta) * m_camera->getForward() );
+        m_camera->updateGlobalTransform();
+        m_camera->updateModelMatrix();
     }
     //Solve mouse wheel event for the renderables of the viewer
     for(const RenderablePtr & r : m_renderables)
@@ -479,7 +481,7 @@ void Viewer::mouseMoveEvent(sf::Event& e)
 
     if( sf::Mouse::isButtonPressed(sf::Mouse::Right) )
     {
-        m_camera.update(deltaMousePosition);
+        m_camera->update(deltaMousePosition);
     }
 
     //Set last mouse position.
@@ -503,7 +505,7 @@ void Viewer::handleEvent()
         case sf::Event::Resized:
             m_window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
             m_texture.create(event.size.width, event.size.height, sf::ContextSettings{ 0 /* depth*/, 0 /*stencil*/, 4 /*anti aliasing level*/, 4 /*GL major version*/, 0 /*GL minor version*/});
-            m_camera.setRatio( (float)(m_window.getSize().x)/(float)(m_window.getSize().y) );
+            m_camera->setRatio( (float)(m_window.getSize().x)/(float)(m_window.getSize().y) );
             //m_tengine.setWindowDimensions( m_window.getSize().x, m_window.getSize().y );
             glcheck(glViewport(0, 0, event.size.width, event.size.height));
             break;
@@ -531,27 +533,25 @@ void Viewer::handleEvent()
         }
     }
 
-    if( m_camera.getBehavior() == Camera::SPACESHIP_BEHAVIOR && glm::any(glm::bvec3(m_keyboard.direction)))
-    {
+    if (m_camera->getBehavior() == Camera::SPACESHIP_BEHAVIOR && glm::any(glm::bvec3(m_keyboard.direction))) {
         float speed = m_keyboard.speed * Duration(clock::now() - m_lastEventHandleTime).count();
         glm::vec3 shift = speed * m_keyboard.normalized_direction();
-        m_camera.setPosition( m_camera.getPosition()//
-                              + shift.x * m_camera.getRight()
-                              + shift.y * m_camera.getUp()
-                              + shift.z * m_camera.getForward() );
-        m_camera.updateGlobalTransform();
-        m_camera.updateModelMatrix();
+        m_camera->setPosition(m_camera->getPosition()
+                              + shift.x * m_camera->getRight()
+                              + shift.y * m_camera->getUp()
+                              + shift.z * m_camera->getForward() );
+        m_camera->updateGlobalTransform();
+        m_camera->updateModelMatrix();
     }
-    else if( m_camera.getBehavior() == Camera::FIRST_PERSON_BEHAVIOR)
-    {
+    else if (m_camera->getBehavior() == Camera::FIRST_PERSON_BEHAVIOR) {
         float dt = Duration(clock::now() - m_lastEventHandleTime).count();
 
         // Translations
 
-        glm::vec3 step = m_keyboard.speed * dt * m_keyboard.normalized_direction() * 2.0f;
-        glm::vec3 forward = m_camera.getForward();
+        glm::vec3 step = m_keyboard.speed * dt * m_keyboard.normalized_direction() * 10.0f;
+        glm::vec3 forward = m_camera->getForward();
         glm::vec3 flat_forward = normalize(forward * glm::vec3(1.0f, 0.0f, 1.0f));
-        glm::vec3 flat_right = normalize(m_camera.getRight() * glm::vec3(1.0f, 0.0f, 1.0f));
+        glm::vec3 flat_right = normalize(m_camera->getRight() * glm::vec3(1.0f, 0.0f, 1.0f));
         glm::vec3 displacement = step.z * flat_forward + step.x * flat_right + step.y * glm::vec3(0.0f, 1.0f, 0.0f);
 
         // Rotations
@@ -568,9 +568,9 @@ void Viewer::handleEvent()
         glm::vec3 new_forward(std::cos(phi) * sintheta, std::cos(theta), std::sin(phi) * sintheta);
 
         // Set view matrix
-        glm::vec3 cpos = m_camera.getPosition() + displacement;
+        glm::vec3 cpos = m_camera->getPosition() + displacement;
         glm::mat4 new_view = glm::lookAt(cpos, cpos + new_forward, glm::vec3{0,1,0});
-        m_camera.setViewMatrix(new_view);
+        m_camera->setViewMatrix(new_view);
     }
     m_lastEventHandleTime = clock::now();
 }
@@ -596,8 +596,8 @@ void Viewer::takeScreenshot()
 
 void Viewer::changeCameraMode()
 {
-    Camera::CAMERA_BEHAVIOR mode = m_camera.getBehavior();
-    m_camera.incrementBehavior();
+    Camera::CAMERA_BEHAVIOR mode = m_camera->getBehavior();
+    m_camera->incrementBehavior();
 }
 
 bool Viewer::isRunning() const
@@ -621,21 +621,20 @@ void Viewer::reloadShaderPrograms()
         program->reload();
 }
 
-Camera& Viewer::getCamera()
-{
+std::shared_ptr<Camera> Viewer::getCamera() {
     return m_camera;
 }
 
 glm::vec3 Viewer::windowToWorld( const glm::vec3& windowCoordinate )
 {
     sf::Vector2u size = m_window.getSize();
-    return glm::unProject( windowCoordinate, m_camera.viewMatrix(), m_camera.projectionMatrix(), glm::vec4(0,0,size.x, size.y));
+    return glm::unProject( windowCoordinate, m_camera->viewMatrix(), m_camera->projectionMatrix(), glm::vec4(0,0,size.x, size.y));
 }
 
 glm::vec3 Viewer::worldToWindow( const glm::vec3& worldCoordinate )
 {
     sf::Vector2u size = m_window.getSize();
-    return glm::project( worldCoordinate, m_camera.viewMatrix(), m_camera.projectionMatrix(), glm::vec4(0,0,size.x, size.y));
+    return glm::project( worldCoordinate, m_camera->viewMatrix(), m_camera->projectionMatrix(), glm::vec4(0,0,size.x, size.y));
 }
 
 void Viewer::setBackgroundColor(const glm::vec4 & color)

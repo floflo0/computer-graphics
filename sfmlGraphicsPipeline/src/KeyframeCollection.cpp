@@ -68,3 +68,7 @@ KeyframeCollection::getBoundingKeyframes(const float time) const {
     }
     return result;
 }
+
+void KeyframeCollection::clear() {
+    m_keyframes.clear();
+}

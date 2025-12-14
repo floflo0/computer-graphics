@@ -4,8 +4,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
-#include <glm/gtx/vector_angle.hpp> 
-#include <glm/gtx/io.hpp> 
+#include <glm/gtx/vector_angle.hpp>
+#include <glm/gtx/io.hpp>
 #include <limits>
 
 using namespace std;
@@ -18,7 +18,7 @@ const glm::vec3 Camera::base_forward = glm::vec3(0, 0, -1);
 
 Camera::Camera()
     : m_view{ glm::lookAt( glm::vec3{0, 0, -5}, glm::vec3{}, glm::vec3{0,1,0}) },
-      m_fov{ M_PI * 0.5 }, m_ratio{ 1.0f }, m_znear{ 0.01f }, m_zfar{ 250.0f },
+      m_fov{ M_PI * 0.5 }, m_ratio{ 1.0f }, m_znear{ 0.01f }, m_zfar{ 1000.0f },
       m_behavior{ FIRST_PERSON_BEHAVIOR }, m_last_q{1.0f, 0.0f, 0.0f, 0.0f},
       m_current_q{1.0f, 0.0f, 0.0f, 0.0f}
 {
@@ -205,11 +205,11 @@ void Camera::setBehavior(CAMERA_BEHAVIOR behavior )
         else
             axis = glm::normalize(axis);
         m_last_q = glm::angleAxis(angle, axis);
-    } 
+    }
     LOG( info, "Camera changed to " << CAMERA_BEHAVIOR_NAMES[m_behavior] << ".");
 }
 
-glm::vec3 Camera::project(glm::vec2 p) 
+glm::vec3 Camera::project(glm::vec2 p)
 {
     float r = 1.0f;
     p.x = p.x * m_ratio;
@@ -224,11 +224,11 @@ glm::vec3 Camera::project(glm::vec2 p)
     return glm::vec3(p, z);
 }
 
-void Camera::mousePress(glm::vec2 pos){ 
+void Camera::mousePress(glm::vec2 pos){
     m_start = pos;
     m_current = pos;
 }
-void Camera::mouseRelease(){ 
+void Camera::mouseRelease(){
     m_last_q = m_last_q * m_current_q;
     m_start = glm::vec2(0.0f);
     m_current = m_start;
@@ -270,7 +270,7 @@ void Camera::update(glm::vec2 dpos)
 
             glm::vec3 dir = glm::normalize(glm::vec3(m_base_view[3]));
             float length = glm::length(glm::vec3(m_view[3]));
-            
+
             setPosition( (-dir * length) * glm::mat3(rotation) );
 
         }

@@ -49,6 +49,8 @@ public:
    */
   bool empty() const;
 
+  void clear();
+
   const std::map< float, GeometricTransformation > & getKeyFrames() const;
 
 private:
@@ -87,4 +89,4 @@ private:
   std::map< float, GeometricTransformation > m_keyframes;
 };
 
-# endif 
+# endif

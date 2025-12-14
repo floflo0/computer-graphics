@@ -32,17 +32,15 @@ public:
      */
     void addGlobalTransformKeyframe( const GeometricTransformation& transformation, float time );
 
+    KeyframeCollection m_localKeyframes; /*!< A collection of keyframes for the local transformation of renderable. */
+    KeyframeCollection m_globalKeyframes; /*!< A collection of keyframes for the global transformation of renderable. */
+
 protected:
     KeyframedHierarchicalRenderable():
         HierarchicalRenderable(nullptr)
     {}
 
     virtual void do_animate( float time );
-
-private:
-    KeyframeCollection m_localKeyframes; /*!< A collection of keyframes for the local transformation of renderable. */
-    KeyframeCollection m_globalKeyframes; /*!< A collection of keyframes for the global transformation of renderable. */
-
 };
 
 typedef std::shared_ptr<KeyframedHierarchicalRenderable> KeyframedHierarchicalRenderablePtr;

@@ -143,7 +143,7 @@ public:
      *
      * Access to the camera used to render the scene in the viewer.
      * @return A reference to the viewer's camera. */
-    Camera& getCamera();
+    std::shared_ptr<Camera> getCamera();
 
     /**@brief Get the world coordinate of a window point.
      *
@@ -275,7 +275,7 @@ private:
     void mouseMoveEvent(sf::Event& e);
 
 
-    Camera m_camera; /*!< Camera used to render the scene in the Viewer. */
+    std::shared_ptr<Camera> m_camera; /*!< Camera used to render the scene in the Viewer. */
     sf::RenderWindow m_window; /*!< Pointer to the render window. */
     sf::RenderTexture m_texture; /*!< Pointer to the render texture. */
     std::multiset< RenderablePtr, PriorityComparator> m_renderables; /*!< Ordered set of renderables that the viewer displays. */
@@ -289,7 +289,7 @@ private:
     //TextEngine m_tengine; /*!< Engine to display textual information. */
     //TimePoint m_modeInformationTextDisappearanceTime; /*!< Duration of appearance for textual information in seconds. */
     //std::string m_modeInformationText; /*!< Textual information that will be displayed. */
-    
+
     bool m_applicationRunning; /*!< Boolean that runs the main animation loop. Always true except when closing the application. */
     bool m_animationLoop; /*!< True if the animation loops after a given duration, \ref m_loopDuration. */
     bool m_animationIsStarted; /*!< True if the animation is running. False otherwise. */
@@ -316,7 +316,7 @@ private:
         //translations
         float speed;
         glm::vec3 direction;
-        
+
         // rotations
         glm::vec2 orientation;
         glm::vec2 aspeed;

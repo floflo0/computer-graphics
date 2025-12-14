@@ -62,8 +62,9 @@ void HierarchicalRenderable::afterDraw()
     //-Send projection and view matrix to the GPU
     //-Draw the object ;)
     //-Unbind their respective shaderProgram.
-    for(size_t i=0; i<m_children.size(); ++i)
-    {
+    for(size_t i=0; i<m_children.size(); ++i) {
+        if (std::dynamic_pointer_cast<Camera>(m_children[i])) continue;
+
         // this affectation here is a little hack we use to keep the source code simple.
         // As we go through the hierarchy for the drawing, we will need to have access to the camera, in order
         // to get the projection and the view matrices. The non root hierarchical renderables has not been added
@@ -72,8 +73,8 @@ void HierarchicalRenderable::afterDraw()
         m_children[i]->m_viewer = m_viewer;
 
         m_children[i]->bindShaderProgram();
-        glcheck(glUniformMatrix4fv(m_children[i]->projectionLocation(), 1, GL_FALSE, glm::value_ptr(m_viewer->getCamera().projectionMatrix())));
-        glcheck(glUniformMatrix4fv(m_children[i]->viewLocation(), 1, GL_FALSE, glm::value_ptr(m_viewer->getCamera().viewMatrix())));
+        glcheck(glUniformMatrix4fv(m_children[i]->projectionLocation(), 1, GL_FALSE, glm::value_ptr(m_viewer->getCamera()->projectionMatrix())));
+        glcheck(glUniformMatrix4fv(m_children[i]->viewLocation(), 1, GL_FALSE, glm::value_ptr(m_viewer->getCamera()->viewMatrix())));
         m_children[i]->draw();
         m_children[i]->unbindShaderProgram();
     }

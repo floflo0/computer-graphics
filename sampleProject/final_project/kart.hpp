@@ -9,6 +9,8 @@ public:
 
     TexturedLightedMeshRenderablePtr getRenderable() const;
 
+    void startRotateWheels();
+
 private:
     TexturedLightedMeshRenderablePtr car;
     TexturedLightedMeshRenderablePtr canon;

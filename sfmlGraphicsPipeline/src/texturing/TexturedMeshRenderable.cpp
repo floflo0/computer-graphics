@@ -32,7 +32,7 @@ TexturedMeshRenderable::TexturedMeshRenderable(
     const std::string & mesh_filename,
     const std::string & texture_filename) :
     MeshRenderable(program, mesh_filename), // Should initialize m_tcoords trought read_obj...
-    m_tBuffer(0), m_texId(0), m_wrap_option(0), m_filter_option(0)
+    m_tBuffer(0), m_texId(0), m_wrap_option(0), m_filter_option(1)
 {
     m_image.loadFromFile(texture_filename);
     if (m_tcoords.size() != m_positions.size()){
@@ -53,7 +53,7 @@ TexturedMeshRenderable::TexturedMeshRenderable(
     const sf::Image & image,
     const std::vector< glm::vec2 > & tcoords) :
     MeshRenderable(program, positions, indices, normals, colors),
-    m_tBuffer(0), m_texId(0), m_image(image), m_wrap_option(0), m_filter_option(0)
+    m_tBuffer(0), m_texId(0), m_image(image), m_wrap_option(0), m_filter_option(1)
 {
     m_tcoords = tcoords;
     m_original_tcoords = tcoords;
@@ -69,7 +69,7 @@ TexturedMeshRenderable::TexturedMeshRenderable(
     const sf::Image & image,
     const std::vector< glm::vec2 > & tcoords) :
     MeshRenderable(program, positions, normals, colors),
-    m_tBuffer(0), m_texId(0), m_image(image), m_wrap_option(0), m_filter_option(0)
+    m_tBuffer(0), m_texId(0), m_image(image), m_wrap_option(0), m_filter_option(1)
 {
     m_tcoords = tcoords;
     m_original_tcoords = tcoords;
@@ -79,7 +79,7 @@ TexturedMeshRenderable::TexturedMeshRenderable(
 
 TexturedMeshRenderable::TexturedMeshRenderable(ShaderProgramPtr prog, bool indexed) :
     MeshRenderable(prog, indexed),
-    m_tBuffer(0), m_texId(0), m_wrap_option(0), m_filter_option(0)
+    m_tBuffer(0), m_texId(0), m_wrap_option(0), m_filter_option(1)
 {
     gen_buffers();
 }
