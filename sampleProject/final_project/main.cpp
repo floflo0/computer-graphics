@@ -178,7 +178,7 @@ static void camera_animation_follow_kart(std::shared_ptr<Camera> camera, float c
     );
 
     camera->addGlobalTransformKeyframe(behind_kart, camera_animation_time);
-    camera_animation_time += 8.0f;
+    camera_animation_time += 7.0f;
     camera->addGlobalTransformKeyframe(behind_kart, camera_animation_time);
 
     camera_animation_time += 10e-6;
@@ -188,17 +188,12 @@ static void camera_animation_follow_kart(std::shared_ptr<Camera> camera, float c
 
     camera_animation_time += 10e-6;
     camera->addGlobalTransformKeyframe(behind_kart, camera_animation_time);
-    camera_animation_time += 3.0f;
+    camera_animation_time += 9.0f;
     camera->addGlobalTransformKeyframe(behind_kart, camera_animation_time);
 
     camera_animation_time += 10e-6;
-    camera->addGlobalTransformKeyframe(front_right_close_kart, camera_animation_time);
-    camera_animation_time += 2.0f;
-    camera->addGlobalTransformKeyframe(front_right_close_kart, camera_animation_time);
-
-    camera_animation_time += 10e-6;
     camera->addGlobalTransformKeyframe(front_left_kart, camera_animation_time);
-    camera_animation_time += 3.0f;
+    camera_animation_time += 5.0f;
     camera->addGlobalTransformKeyframe(front_left_kart, camera_animation_time);
 
     camera_animation_time += 10e-6;
@@ -207,18 +202,18 @@ static void camera_animation_follow_kart(std::shared_ptr<Camera> camera, float c
     camera->addGlobalTransformKeyframe(behind_kart, camera_animation_time);
 
     camera_animation_time += 10e-6;
-    camera->addGlobalTransformKeyframe(side_right_kart, camera_animation_time);
-    camera_animation_time += 2.0f;
-    camera->addGlobalTransformKeyframe(side_right_kart, camera_animation_time);
+    camera->addGlobalTransformKeyframe(side_left_kart, camera_animation_time);
+    camera_animation_time += 3.0f;
+    camera->addGlobalTransformKeyframe(side_left_kart, camera_animation_time);
 
     camera_animation_time += 10e-6;
     camera->addGlobalTransformKeyframe(front_right_kart, camera_animation_time);
-    camera_animation_time += 3.0f;
+    camera_animation_time += 4.0f;
     camera->addGlobalTransformKeyframe(front_right_kart, camera_animation_time);
 
     camera_animation_time += 10e-6;
     camera->addGlobalTransformKeyframe(front_left_close_kart, camera_animation_time);
-    camera_animation_time += 2.0f;
+    camera_animation_time += 3.0f;
     camera->addGlobalTransformKeyframe(front_left_close_kart, camera_animation_time);
 
     camera_animation_time += 10e-6;
@@ -232,14 +227,34 @@ static void camera_animation_follow_kart(std::shared_ptr<Camera> camera, float c
     camera->addGlobalTransformKeyframe(front_right_kart, camera_animation_time);
 
     camera_animation_time += 10e-6;
+    camera->addGlobalTransformKeyframe(behind_kart, camera_animation_time);
+    camera_animation_time += 19.0f;
+    camera->addGlobalTransformKeyframe(behind_kart, camera_animation_time);
+
+    camera_animation_time += 10e-6;
+    camera->addGlobalTransformKeyframe(front_right_kart, camera_animation_time);
+    camera_animation_time += 3.0f;
+    camera->addGlobalTransformKeyframe(front_right_kart, camera_animation_time);
+
+    camera_animation_time += 10e-6;
     camera->addGlobalTransformKeyframe(side_left_kart, camera_animation_time);
     camera_animation_time += 2.0f;
     camera->addGlobalTransformKeyframe(side_left_kart, camera_animation_time);
 
     camera_animation_time += 10e-6;
-    camera->addGlobalTransformKeyframe(behind_kart, camera_animation_time);
+    camera->addGlobalTransformKeyframe(front_right_close_kart, camera_animation_time);
     camera_animation_time += 3.0f;
-    camera->addGlobalTransformKeyframe(behind_kart, camera_animation_time);
+    camera->addGlobalTransformKeyframe(front_right_close_kart, camera_animation_time);
+
+    camera_animation_time += 10e-6;
+    camera->addGlobalTransformKeyframe(side_left_kart, camera_animation_time);
+    camera_animation_time += 5.0f;
+    camera->addGlobalTransformKeyframe(side_left_kart, camera_animation_time);
+
+    camera_animation_time += 10e-6;
+    camera->addGlobalTransformKeyframe(front_left_kart, camera_animation_time);
+    camera_animation_time += 50.0f;
+    camera->addGlobalTransformKeyframe(front_left_kart, camera_animation_time);
 }
 
 static void thwomp_animation(TexturedLightedMeshRenderablePtr thwomp) {
@@ -2334,8 +2349,6 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
 
     // Finish line yayyy
 
-    // endless animation to not loop
-
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {20.5f, 1.17, -1.6f},
@@ -2486,6 +2499,15 @@ void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr& bobOmbRender
             glm::vec3(epsilonScale) // Scales down to disappear
         ),
         lap2_start_time + 21.6f
+    );
+
+    bobOmbRenderable->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {0.0f, -1000.0f, 0.0f}, // Push the bob-omb far below scene
+            qY(5.0f),
+            glm::vec3(epsilonScale)
+        ),
+        lap2_start_time + 21.6f + 10e-6
     );
 
     bobOmbRenderable->addGlobalTransformKeyframe(
@@ -3616,8 +3638,6 @@ void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& ste
         ),
         animation_time
     );
-
-    // transforms himself in Bill Ball
 
     // reappear after Bill Ball, endless animation
 
