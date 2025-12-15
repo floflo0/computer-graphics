@@ -562,6 +562,15 @@ void initialize_scene(Viewer &viewer) {
     viewer.addRenderable(mystery_cube_1);
     viewer.addRenderable(mystery_cube_2);
 
+    // Create Bill
+    const std::string bill_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/bill.obj";
+
+    auto bill = std::make_shared<TexturedLightedMeshRenderable>(textureShader, bill_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/bill.png");
+
+    bill->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -10.0f) * getRotationMatrix(glm::radians(90.0f), 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
+
+    viewer.addRenderable(bill);
+
     // Create Rainbow Road
     const std::string rainbow_path = "../../sfmlGraphicsPipeline/meshes/rainbow_road.obj";
     const std::string rainbow_texture_path = "../../sfmlGraphicsPipeline/textures/rainbow_road.png";
