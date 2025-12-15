@@ -18,7 +18,7 @@ const glm::vec3 Camera::base_forward = glm::vec3(0, 0, -1);
 
 Camera::Camera()
     : m_view{ glm::lookAt( glm::vec3{0, 0, -5}, glm::vec3{}, glm::vec3{0,1,0}) },
-      m_fov{ M_PI * 0.5 }, m_ratio{ 1.0f }, m_znear{ 0.01f }, m_zfar{ 1000.0f },
+      m_fov{ M_PI * 0.5 }, m_ratio{ 1.0f }, m_znear{ 0.01f }, m_zfar{ 2000.0f },
       m_behavior{ FIRST_PERSON_BEHAVIOR }, m_last_q{1.0f, 0.0f, 0.0f, 0.0f},
       m_current_q{1.0f, 0.0f, 0.0f, 0.0f}
 {
