@@ -49,6 +49,8 @@ PointLightPtr firePointLight;
 void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root);
 void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& steel_driver);
 void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr &bobOmb);
+void billBall_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& bill);
+
 
 float lap2_start_time;
 
@@ -623,6 +625,8 @@ void initialize_scene(Viewer &viewer) {
     kartPenguin_animation(viewer, steel_driver);
 
     movingBobomb(viewer, bobOmb);
+    billBall_animation(viewer, bill);
+
 
     auto bobOmbExplosion = std::make_shared<BobOmbExplosion>(
         system,
@@ -2274,7 +2278,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
         lap2_start_time + 34.5f
     );
 
-    //  TODO INSERT BILLBALL HERE
+    // INSERT BILLBALL HERE
 
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
@@ -2294,15 +2298,6 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
         lap2_start_time + 41.6f
     );
 
-    kart_root->addGlobalTransformKeyframe(
-        GeometricTransformation(
-            {20.5f, 1.17f, -1.6f},
-            glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
-            glm::vec3(scale)
-        ),
-        lap2_start_time + 50.0f
-    );
-
     auto car = kart->get_car();
     car->addGlobalTransformKeyframe(
         GeometricTransformation(
@@ -2318,7 +2313,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
             qY(0.0f),
             glm::vec3(1.0f)
         ),
-        lap2_start_time + 37.6f
+        lap2_start_time + 36.2f
     );
     car->addGlobalTransformKeyframe(
         GeometricTransformation(
@@ -2326,7 +2321,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
             qY(0.0f),
             glm::vec3(1.0f, 0.2f, 1.0f)
         ),
-        lap2_start_time + 37.6f + 10e-6
+        lap2_start_time + 36.2f + 10e-6
     );
     car->addGlobalTransformKeyframe(
         GeometricTransformation(
@@ -2345,16 +2340,16 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
         GeometricTransformation(
             {20.5f, 1.17, -1.6f},   
             glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
-            glm::vec3(epsilon)
+            glm::vec3(scale)
         ),
         lap2_start_time + 47.00000001f
     );
 
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {20.5f, -1000.0f, -1.6f},   
+            {20.5f, 1.17f, -1.6f},   
             glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
-            glm::vec3(epsilon)
+            glm::vec3(scale)
         ),
         lap2_start_time + 1000.0f
     );
@@ -3622,17 +3617,163 @@ void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& ste
         animation_time
     );
 
-    // endless animation 
+    // transforms himself in Bill Ball
 
-    animation_time += 1000.0f;
+    // reappear after Bill Ball, endless animation 
+
+    animation_time += (2.5f - epsilon);
     steel_driver->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {46.0f, -10000.0f, -8.0f},
+            {10.0f, 1.5f, -1.6f},
+            glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(epsilon)
+        ),
+        animation_time
+    );
+
+    animation_time += epsilon;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {10.0f, 1.5f, -1.6f},
+            glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 25.0f ;
+    steel_driver->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {10.0f, 1.5f, -1.6f},
+            glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(epsilon)
+        ),
+        animation_time
+    );
+}
+
+
+
+
+//------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
+//----------------------------------Animation du Bill Ball-----------------------------------------------
+//------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
+
+void billBall_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& bill) {
+    const float scale = 0.1f;
+    float epsilon = 0.0001f;
+
+    float animation_time = 0.0f;
+
+    float billBall_starting_time = 76.5f;
+
+    glm::quat qFaceCamera =
+        glm::angleAxis(glm::radians(90.0f), glm::vec3(1, 0, 0));
+
+    glm::quat qYaw =
+        glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0));
+
+    glm::quat rotation = qYaw * qFaceCamera;
+
+
+    // make him goes far away + small
+    
+    animation_time += epsilon;
+    bill->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {0.0f, -10000.0f, 0.0f},
+            glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)) * qFaceCamera,
+            glm::vec3(epsilon)
+        ),
+        animation_time
+    );
+
+    // appears at the end
+
+    animation_time += (billBall_starting_time - epsilon);
+    bill->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {46.0f, 2.5f, -8.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
             glm::vec3(epsilon)
         ),
         animation_time
     );
 
-    // transforms himself in Bill Ball
+    animation_time += epsilon;
+    bill->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {46.0f, 2.5f, -8.0f},
+            glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)) * qFaceCamera,
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    // turn right 
+
+    animation_time += 0.6f;
+    bill->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {45.9f, 2.5f, -6.0f},
+            glm::angleAxis(glm::radians(350.0f), glm::vec3(0,1,0)) * qFaceCamera,
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.1f;
+    bill->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {45.4f, 2.5f, -4.0f},
+            glm::angleAxis(glm::radians(330.0f), glm::vec3(0,1,0)) * qFaceCamera,
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.1f;
+    bill->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {43.9f, 2.5f, -3.0f},
+            glm::angleAxis(glm::radians(310.0f), glm::vec3(0,1,0)) * qFaceCamera,
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.1f;
+    bill->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {42.0f, 2.5f, -1.8f},
+            glm::angleAxis(glm::radians(285.0f), glm::vec3(0,1,0)) * qFaceCamera,
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.1f;
+    bill->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {39.9f, 2.5f, -1.6f},
+            glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)) * qFaceCamera,
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    // straight line to the end
+
+    animation_time += 2.0f;
+    bill->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {10.5f, 2.5f, -1.6f},
+            glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)) * qFaceCamera,
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+    
 }
