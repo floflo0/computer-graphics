@@ -493,7 +493,8 @@ void initialize_scene(Viewer &viewer) {
     green_shell->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -4.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getRotationMatrix(M_PI_2f, 0.0f, 0.0f, 1.0f) * getScaleMatrix(0.1f));
     red_shell->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -6.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getRotationMatrix(M_PI_2f, 0.0f, 0.0f, 1.0f) * getScaleMatrix(0.1f));
 
-    viewer.addRenderable(green_shell);
+    // Not used
+    // viewer.addRenderable(green_shell);
     viewer.addRenderable(red_shell);
 
     // Create Lightning
@@ -501,7 +502,8 @@ void initialize_scene(Viewer &viewer) {
 
     auto lightning = std::make_shared<TexturedLightedMeshRenderable>(textureShader, lightning_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/lightning.png");
 
-    lightning->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -3.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
+    // Not used
+    // lightning->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -3.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
 
     // Not used in the scene
     // viewer.addRenderable(lightning);
@@ -513,7 +515,8 @@ void initialize_scene(Viewer &viewer) {
 
     mushroom->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -7.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
 
-    viewer.addRenderable(mushroom);
+    // Not used
+    // viewer.addRenderable(mushroom);
 
     // Create Blue Shell
     const std::string blueShell_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/blue-shell.obj";
@@ -814,7 +817,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
         ),
         animation_time
     );
-
+    
     lakitu->addGlobalTransformKeyframe(
         GeometricTransformation(
             {24.0f, 3.5f, -5.2f},
@@ -972,7 +975,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
         animation_time
     );
 
-    animation_time += 0.7f;
+    animation_time += 0.2f;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {22.0f, -1.0f, -38.0f},
@@ -1000,10 +1003,10 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
         animation_time
     );
 
-    animation_time += 0.7f;
+    animation_time += 0.2f;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {22.0f, -5.0f, -38.0f},
+            {22.0f, -3.0f, -38.0f},
             glm::angleAxis(glm::radians(30.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
@@ -1011,17 +1014,17 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
     );
     lakitu->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {22.0, -4.5f, -37.0f},
+            {22.0, -2.5f, -37.0f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
             glm::vec3(0.02f)
         ),
         animation_time
     );
 
-    animation_time += 0.8f;
+    animation_time += 0.2f;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {22.0f, -8.0f, -38.0f},
+            {22.0f, -6.0f, -38.0f},
             glm::angleAxis(glm::radians(15.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
@@ -1030,7 +1033,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
 
     lakitu->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {22.0, -7.5f, -37.0f},
+            {22.0, -5.5f, -37.0f},
             glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
             glm::vec3(0.02f)
         ),
@@ -1056,8 +1059,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
         animation_time
     );
 
-
-    animation_time += 2.0f;
+    animation_time += 0.8f;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {21.0f, 3.0f, -38.0f},
@@ -1076,10 +1078,10 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
         animation_time
     );
 
-    animation_time += 2.0f;
+    animation_time += 1.0f;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {21.0f, 1.0f, -38.0f},
+            {21.0f, 0.7, -38.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
@@ -1099,10 +1101,10 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
 
     // Letting some time for Lakitu to put the kart back on the track
 
-    animation_time += 2.0f;
+    animation_time += 0.8f;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {21.0f, 0.4f, -38.0f},
+            {21.0f, 0.7f, -38.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
@@ -1131,7 +1133,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
     animation_time += 10e-6;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {21.0f, 0.4f, -38.0f},
+            {21.0f, 0.7f, -38.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
@@ -1143,7 +1145,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
     animation_time += 0.4f;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {21.0f, 0.4f, -32.0f},
+            {21.0f, 0.6f, -32.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
@@ -2196,7 +2198,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
         lap2_start_time + 29.5f
     );
 
-    // Do not go on ramp
+    // Do not go on ramp 
 
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
@@ -2351,7 +2353,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
 
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {20.5f, 1.17, -1.6f},
+            {20.5f, 1.17, -1.6f},   
             glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
@@ -2360,7 +2362,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
 
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {20.5f, 1.17f, -1.6f},
+            {20.5f, 1.17f, -1.6f},   
             glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
@@ -3084,7 +3086,7 @@ void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& ste
         animation_time
     );
 
-    // first right turn
+    // first right turn 
 
     animation_time += 0.4f;
     steel_driver->addGlobalTransformKeyframe(
@@ -3279,7 +3281,7 @@ void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& ste
         animation_time
     );
 
-    // straight line
+    // straight line 
 
     animation_time += 1.2f;
     steel_driver->addGlobalTransformKeyframe(
@@ -3291,7 +3293,7 @@ void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& ste
         animation_time
     );
 
-    // left turn
+    // left turn 
 
     animation_time += 0.4f;
     steel_driver->addGlobalTransformKeyframe(
@@ -3313,7 +3315,7 @@ void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& ste
         animation_time
     );
 
-    // stops him midturn, quick 360
+    // stops him midturn, quick 360 
 
     animation_time += 0.2f;
     steel_driver->addGlobalTransformKeyframe(
@@ -3395,7 +3397,7 @@ void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& ste
         animation_time
     );
 
-    // straight line
+    // straight line 
 
     animation_time += 3.5f;
     steel_driver->addGlobalTransformKeyframe(
@@ -3407,7 +3409,7 @@ void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& ste
         animation_time
     );
 
-    // right turn
+    // right turn 
 
     animation_time += 0.6f;
     steel_driver->addGlobalTransformKeyframe(
@@ -3438,7 +3440,7 @@ void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& ste
         ),
         animation_time
     );
-
+    
  // straight line
 
     animation_time += 0.4f;
@@ -3503,7 +3505,7 @@ void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& ste
         animation_time
     );
 
-    // straight line
+    // straight line 
 
     animation_time += 1.7f;
     steel_driver->addGlobalTransformKeyframe(
@@ -3595,7 +3597,7 @@ void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& ste
         animation_time
     );
 
-    animation_time += 3.3f;
+    animation_time += 0.8f;
     steel_driver->addGlobalTransformKeyframe(
         GeometricTransformation(
             {44.4f, 1.5f, -11.0f},
@@ -3605,7 +3607,7 @@ void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& ste
         animation_time
     );
 
-    animation_time += 3.3f;
+    animation_time += 0.8f;
     steel_driver->addGlobalTransformKeyframe(
         GeometricTransformation(
             {46.0f, 1.5f, -8.0f},
@@ -3639,9 +3641,11 @@ void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& ste
         animation_time
     );
 
-    // reappear after Bill Ball, endless animation
+    // transforms himself in Bill Ball
 
-    animation_time += (7.5f - epsilon);
+    // reappear after Bill Ball, endless animation 
+
+    animation_time += (2.5f - epsilon);
     steel_driver->addGlobalTransformKeyframe(
         GeometricTransformation(
             {10.0f, 1.5f, -1.6f},
@@ -3687,7 +3691,7 @@ void billBall_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& bill) 
 
     float animation_time = 0.0f;
 
-    float billBall_starting_time = 81.5f;
+    float billBall_starting_time = 76.5f;
 
     glm::quat qFaceCamera =
         glm::angleAxis(glm::radians(90.0f), glm::vec3(1, 0, 0));
@@ -3699,7 +3703,7 @@ void billBall_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& bill) 
 
 
     // make him goes far away + small
-
+    
     animation_time += epsilon;
     bill->addGlobalTransformKeyframe(
         GeometricTransformation(
@@ -3732,7 +3736,7 @@ void billBall_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& bill) 
         animation_time
     );
 
-    // turn right
+    // turn right 
 
     animation_time += 0.6f;
     bill->addGlobalTransformKeyframe(
@@ -3795,5 +3799,5 @@ void billBall_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& bill) 
         ),
         animation_time
     );
-
+    
 }
