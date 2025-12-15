@@ -42,7 +42,7 @@ LightedSphereRenderablePtr leftFire;
 LightedSphereRenderablePtr middleFire;
 LightedSphereRenderablePtr rightFire;
 
-SpotLightPtr fireSpot;
+PointLightPtr firePointLight;
 
 void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart);
 void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& steel_driver);
@@ -281,7 +281,7 @@ void initialize_scene(Viewer &viewer) {
 
 
     //lumières directionnelles (globale)
-    glm::vec3 d_ambient(0.3f), d_diffuse(0.8f), d_specular(0.3f);
+    glm::vec3 d_ambient(2.5f), d_diffuse(0.8f), d_specular(0.3f);
 
     glm::vec3 d_direction1 = glm::normalize(glm::vec3(-1.0,-1.0,-1.0));
     DirectionalLightPtr directionalLight1 = std::make_shared<DirectionalLight>(d_direction1, d_ambient, d_diffuse, d_specular);
@@ -323,8 +323,8 @@ void initialize_scene(Viewer &viewer) {
         );
 
         redMat = std::make_shared<Material>(
-            glm::vec3(0.8f, 0.1f, 0.1f), // ambient (un peu visible)
-            glm::vec3(1.0f, 0.2f, 0.2f), // diffuse
+            glm::vec3(0.1f, 0.0f, 0.0f), // ambient (un peu visible)
+            glm::vec3(1.0f, 0.0f, 0.0f), // diffuse
             glm::vec3(0.5f),             // specular (mat)
             32.0f
         );
@@ -361,20 +361,32 @@ void initialize_scene(Viewer &viewer) {
 
     }
 
-    glm::vec3 target(28.5, 1.17, -1.6);
-    glm::vec3 firePos(24.25, 3.0, -5.05), fireDir = glm::normalize(target - firePos); // vers la piste
-    fireSpot = std::make_shared<SpotLight>(
+    glm::vec3 firePos(25.0, 3.0, -4.0);
+    firePointLight = std::make_shared<PointLight>(
         firePos,
-        fireDir,
         glm::vec3(0.0f),           // ambient
         glm::vec3(0.0f),           // diffuse (off au départ)
         glm::vec3(0.0f),
-        1.0f, 0.0f, 0.0f,
-        std::cos(glm::radians(20.0f)),
-        std::cos(glm::radians(40.0f))
+        1.0f, 0.0f, 0.0f
     );
 
-    viewer.addSpotLight(fireSpot);
+    viewer.addPointLight(firePointLight);
+
+    // glm::vec3 target(28.5, 1.17, -1.6);
+    // glm::vec3 firePos(24.25, 3.0, -5.05);
+    // glm::vec3 fireDir = glm::normalize(target - firePos); // vers la piste
+    // fireSpot = std::make_shared<SpotLight>(
+    //     firePos,
+    //     fireDir,
+    //     glm::vec3(0.0f),           // ambient
+    //     glm::vec3(0.0f),           // diffuse (off au départ)
+    //     glm::vec3(0.0f),
+    //     1.0f, 0.0f, 0.0f,
+    //     std::cos(glm::radians(20.0f)),
+    //     std::cos(glm::radians(40.0f))
+    // );
+    //
+    // viewer.addSpotLight(fireSpot);
 
     //----------------- Ajout des coureurs ---------------------------
 
@@ -615,7 +627,7 @@ int main() {
     glCullFace(GL_BACK);
 
     auto camera = viewer.getCamera();
-    // float camera_animation_timer = camera_intro_animation(camera);
+    float camera_animation_timer = camera_intro_animation(camera);
 
     bool camera_follow_kart = false;
     bool kart_wheel_rotating = false;
@@ -633,10 +645,10 @@ int main() {
             leftFire->setMaterial(offMat);
             middleFire->setMaterial(offMat);
             rightFire->setMaterial(offMat);
-            fireSpot->setDiffuse(glm::vec3(0.0f));
+            firePointLight->setDiffuse(glm::vec3(0.0f));
         }else if (time <= 13.0) {
             leftFire->setMaterial(redMat);
-            fireSpot->setDiffuse(glm::vec3(3.0f, 0.0f, 0.0f));
+            firePointLight->setDiffuse(glm::vec3(3.0f, 0.0f, 0.0f));
         }else if (time <= 14.0) {
             middleFire->setMaterial(redMat);
         }else if (time <= 15.0) {
@@ -645,7 +657,9 @@ int main() {
             leftFire->setMaterial(greenMat);
             middleFire->setMaterial(greenMat);
             rightFire->setMaterial(greenMat);
-            fireSpot->setDiffuse(glm::vec3(0.0f, 3.0f, 0.0f));
+            firePointLight->setDiffuse(glm::vec3(0.0f, 3.0f, 0.0f));
+        }else if (time >= 17) {
+            firePointLight->setDiffuse(glm::vec3(0.0f));
         }
 
         if (!camera_follow_kart && camera_animation_timer - time <= 0.0f) {
