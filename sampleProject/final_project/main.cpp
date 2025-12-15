@@ -45,11 +45,12 @@ LightedSphereRenderablePtr middleFire;
 LightedSphereRenderablePtr rightFire;
 
 PointLightPtr firePointLight;
-
+SpotLightPtr fireSpot;                              
 void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root);
-void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& steel_driver);
+void kartPenguin_animation(TexturedLightedMeshRenderablePtr& steel_driver);
 void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr &bobOmb);
-void billBall_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& bill);
+void billBall_animation(TexturedLightedMeshRenderablePtr& bill);
+void redShell_animation(TexturedLightedMeshRenderablePtr& red_shell);
 
 
 float lap2_start_time;
@@ -305,7 +306,7 @@ void initialize_scene(Viewer &viewer) {
     viewer.addDirectionalLight(directionalLight1);
     viewer.addDirectionalLight(directionalLight2);
     viewer.addDirectionalLight(directionalLight3);
-
+    // MaterialPtr myMaterial = Material::Pearl();      
     // MaterialPtr myMaterial = std::make_shared<Material>(mAmbient, mDiffuse, mSpecular, mShininess);
     MaterialPtr myMaterial = std::make_shared<Material>(
         glm::vec3(0.05f), // ambient
@@ -478,7 +479,8 @@ void initialize_scene(Viewer &viewer) {
     green_shell->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -4.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getRotationMatrix(M_PI_2f, 0.0f, 0.0f, 1.0f) * getScaleMatrix(0.1f));
     red_shell->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -6.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getRotationMatrix(M_PI_2f, 0.0f, 0.0f, 1.0f) * getScaleMatrix(0.1f));
 
-    viewer.addRenderable(green_shell);
+    // Not used in the scene
+    // viewer.addRenderable(green_shell);
     viewer.addRenderable(red_shell);
 
     // Create Lightning
@@ -498,7 +500,8 @@ void initialize_scene(Viewer &viewer) {
 
     mushroom->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -7.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
 
-    viewer.addRenderable(mushroom);
+    // Not used in the scene
+    // viewer.addRenderable(mushroom);
 
     // Create Blue Shell
     const std::string blueShell_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/blue-shell.obj";
@@ -622,10 +625,11 @@ void initialize_scene(Viewer &viewer) {
 
     auto kartRenderable = kart->getRenderable();
     kartBowser_animation(kartRenderable);
-    kartPenguin_animation(viewer, steel_driver);
+    kartPenguin_animation(steel_driver);
 
     movingBobomb(viewer, bobOmb);
-    billBall_animation(viewer, bill);
+    billBall_animation(bill);
+    redShell_animation(red_shell);
 
 
     auto bobOmbExplosion = std::make_shared<BobOmbExplosion>(
@@ -1084,10 +1088,10 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
 
     // Letting some time for Lakitu to put the kart back on the track
 
-    animation_time += 1.0f;
+    animation_time += 0.7f;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {21.0f, 0.4f, -38.0f},
+            {21.0f, 0.6f, -38.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
@@ -1116,7 +1120,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
     animation_time += 10e-6;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {21.0f, 0.4f, -38.0f},
+            {21.0f, 0.6f, -38.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
@@ -1128,7 +1132,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
     animation_time += 0.4f;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {21.0f, 0.4f, -32.0f},
+            {21.0f, 0.6f, -32.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
@@ -1138,7 +1142,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
     animation_time += 0.4f;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {20.0f, 0.4f, -30.0f},
+            {20.0f, 0.6f, -30.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
@@ -2507,7 +2511,7 @@ void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr& bobOmbRender
 //------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------
 
-void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& steel_driver) {
+void kartPenguin_animation(TexturedLightedMeshRenderablePtr& steel_driver) {
     const float scale = 0.06f;
     float epsilon = 0.0001f;
 
@@ -3661,7 +3665,7 @@ void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& ste
 //------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------
 
-void billBall_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& bill) {
+void billBall_animation(TexturedLightedMeshRenderablePtr& bill) {
     const float scale = 0.1f;
     float epsilon = 0.0001f;
 
@@ -3671,12 +3675,6 @@ void billBall_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& bill) 
 
     glm::quat qFaceCamera =
         glm::angleAxis(glm::radians(90.0f), glm::vec3(1, 0, 0));
-
-    glm::quat qYaw =
-        glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0));
-
-    glm::quat rotation = qYaw * qFaceCamera;
-
 
     // make him goes far away + small
     
@@ -3776,4 +3774,94 @@ void billBall_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& bill) 
         animation_time
     );
     
+}
+
+
+void redShell_animation(TexturedLightedMeshRenderablePtr& red_shell) 
+{
+
+    const float scale = 0.1f;
+    float epsilon = 0.0001f;
+
+    float animation_time = 0.0f;
+
+    glm::quat qFaceCamera =
+        glm::angleAxis(glm::radians(90.0f), glm::vec3(1, 0, 0));
+    
+    // Make the shell disappear at the beginning
+
+    red_shell->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {20.0f, 0.5f, -18.0f},
+            glm::angleAxis(glm::radians(15.0f), glm::vec3(0,1,0)) * qFaceCamera,
+            glm::vec3(epsilon)
+        ),
+        animation_time
+    );
+
+    animation_time += 50.6f;
+    red_shell->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {20.0f, 0.5f, -18.0f},
+            glm::angleAxis(glm::radians(15.0f), glm::vec3(0,1,0)) * qFaceCamera,
+            glm::vec3(epsilon)
+        ),
+        animation_time
+    );
+    // Starting point of the red shell (launched by Steel Driver)
+
+    animation_time += epsilon;
+    red_shell->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {20.0f, 0.5f, -18.0f},
+            glm::angleAxis(glm::radians(15.0f), glm::vec3(0,1,0)) * qFaceCamera,
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 0.3f;
+    red_shell->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {23.0f, 0.5f, -16.0f},
+            glm::angleAxis(glm::radians(15.0f), glm::vec3(0,1,0)) * qFaceCamera,
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+
+    // Impact 
+
+    animation_time += 0.3f;
+    red_shell->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {28.5f, 0.5f, -14.3f},
+            glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)) * qFaceCamera,
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    animation_time += 1.0f;
+    red_shell->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {28.5f, 0.5f, -14.3f},
+            glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)) * qFaceCamera,
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    // disappear after impact
+
+    animation_time += epsilon; 
+    red_shell->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {28.5f, -1000.0f, -14.3f},
+            glm::angleAxis(glm::radians(90.0f), glm::vec3(0, 1, 0)) * qFaceCamera,
+            glm::vec3(epsilon)
+        ),
+        animation_time
+    );
 }
