@@ -44,7 +44,7 @@ LightedSphereRenderablePtr rightFire;
 
 PointLightPtr firePointLight;
 
-void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart);
+void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root);
 void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& steel_driver);
 void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr &bobOmb);
 
