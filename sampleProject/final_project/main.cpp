@@ -478,7 +478,8 @@ void initialize_scene(Viewer &viewer) {
     green_shell->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -4.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getRotationMatrix(M_PI_2f, 0.0f, 0.0f, 1.0f) * getScaleMatrix(0.1f));
     red_shell->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -6.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getRotationMatrix(M_PI_2f, 0.0f, 0.0f, 1.0f) * getScaleMatrix(0.1f));
 
-    viewer.addRenderable(green_shell);
+    // Not used
+    // viewer.addRenderable(green_shell);
     viewer.addRenderable(red_shell);
 
     // Create Lightning
@@ -486,7 +487,8 @@ void initialize_scene(Viewer &viewer) {
 
     auto lightning = std::make_shared<TexturedLightedMeshRenderable>(textureShader, lightning_path, myMaterial, "../../sfmlGraphicsPipeline/textures/mk_objects/lightning.png");
 
-    lightning->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -3.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
+    // Not used
+    // lightning->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -3.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
 
     // Not used in the scene
     // viewer.addRenderable(lightning);
@@ -498,7 +500,8 @@ void initialize_scene(Viewer &viewer) {
 
     mushroom->setGlobalTransform(getTranslationMatrix(-5.0f, 0.0f, -7.0f) * getRotationMatrix(M_PI_2f, 0.0f, 1.0f, 0.0f) * getRotationMatrix(M_PI_2f, 1.0f, 0.0f, 0.0f) * getScaleMatrix(0.1f));
 
-    viewer.addRenderable(mushroom);
+    // Not used
+    // viewer.addRenderable(mushroom);
 
     // Create Blue Shell
     const std::string blueShell_path = "../../sfmlGraphicsPipeline/meshes/mk_objects/blue-shell.obj";
@@ -1041,7 +1044,6 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
         animation_time
     );
 
-
     animation_time += 0.8f;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
@@ -1064,7 +1066,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
     animation_time += 1.0f;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {21.0f, 1.0f, -38.0f},
+            {21.0f, 0.7, -38.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
@@ -1084,10 +1086,10 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
 
     // Letting some time for Lakitu to put the kart back on the track
 
-    animation_time += 1.0f;
+    animation_time += 0.8f;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {21.0f, 0.4f, -38.0f},
+            {21.0f, 0.7f, -38.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
@@ -1116,7 +1118,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
     animation_time += 10e-6;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {21.0f, 0.4f, -38.0f},
+            {21.0f, 0.7f, -38.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
@@ -1128,7 +1130,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
     animation_time += 0.4f;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {21.0f, 0.4f, -32.0f},
+            {21.0f, 0.6f, -32.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
         ),
