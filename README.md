@@ -207,3 +207,13 @@ licensed under the
 Alike license.
 
 Modified to `.obj` format.
+
+#### Bullet Bill
+
+[Bullet Bill](https://sketchfab.com/3d-models/bullet-bill-475c69f78be84bfc823560c22a187efd)
+by [Polygonal_64](https://sketchfab.com/LegoshiFan)
+licensed under the
+[Creative Commons - Attribution - Share](https://creativecommons.org/licenses/by-sa/3.0/)
+Alike license.
+
+Modified to `.obj` format.
