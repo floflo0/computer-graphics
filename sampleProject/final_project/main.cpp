@@ -42,7 +42,9 @@ LightedSphereRenderablePtr leftFire;
 LightedSphereRenderablePtr middleFire;
 LightedSphereRenderablePtr rightFire;
 
-void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root);
+SpotLightPtr fireSpot;
+
+void kartBowser_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& kart);
 void kartPenguin_animation(Viewer& viewer, TexturedLightedMeshRenderablePtr& steel_driver);
 void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr &bobOmb);
 
@@ -257,8 +259,8 @@ void initialize_scene(Viewer &viewer) {
                                                                      "../../sfmlGraphicsPipeline/shaders/cubeMapFragment.glsl");
     ShaderProgramPtr phongShader = std::make_shared<ShaderProgram>(  "../../sfmlGraphicsPipeline/shaders/phongVertex.glsl",
                                                                    "../../sfmlGraphicsPipeline/shaders/phongFragment.glsl");
-    ShaderProgramPtr texShader = std::make_shared<ShaderProgram>(   "../../sfmlGraphicsPipeline/shaders/simpleTextureVertex.glsl",
-                                                                 "../../sfmlGraphicsPipeline/shaders/simpleTextureFragment.glsl");
+    // ShaderProgramPtr texShader = std::make_shared<ShaderProgram>(   "../../sfmlGraphicsPipeline/shaders/simpleTextureVertex.glsl",
+    //                                                              "../../sfmlGraphicsPipeline/shaders/simpleTextureFragment.glsl");
     ShaderProgramPtr textureShader = std::make_shared<ShaderProgram>(   "../../sfmlGraphicsPipeline/shaders/textureVertex.glsl",
                                                                      "../../sfmlGraphicsPipeline/shaders/textureFragment.glsl");
     viewer.addShaderProgram(textureShader);
@@ -279,12 +281,12 @@ void initialize_scene(Viewer &viewer) {
 
 
     //lumières directionnelles (globale)
-    glm::vec3 d_ambient(2.0f), d_diffuse(1.0f), d_specular(0.5f);
+    glm::vec3 d_ambient(0.3f), d_diffuse(0.8f), d_specular(0.3f);
 
-    glm::vec3 d_direction1 = glm::normalize(glm::vec3(-1.0,-1.0,0.0));
+    glm::vec3 d_direction1 = glm::normalize(glm::vec3(-1.0,-1.0,-1.0));
     DirectionalLightPtr directionalLight1 = std::make_shared<DirectionalLight>(d_direction1, d_ambient, d_diffuse, d_specular);
 
-    glm::vec3 d_direction2 = glm::normalize(glm::vec3(0.0,-1.0,-1.0));
+    glm::vec3 d_direction2 = glm::normalize(glm::vec3(1.0,-1.0,-1.0));
     DirectionalLightPtr directionalLight2 = std::make_shared<DirectionalLight>(d_direction2, d_ambient, d_diffuse, d_specular);
 
     glm::vec3 d_direction3 = glm::normalize(glm::vec3(1.0,-1.0,0.0));
@@ -296,11 +298,11 @@ void initialize_scene(Viewer &viewer) {
 
     // MaterialPtr myMaterial = std::make_shared<Material>(mAmbient, mDiffuse, mSpecular, mShininess);
     MaterialPtr myMaterial = std::make_shared<Material>(
-            glm::vec3(0.05f), // ambient
-            glm::vec3(0.15f), // diffuse
-            glm::vec3(1.0f),  // specular
-            1.0f
-        );
+        glm::vec3(0.05f), // ambient
+        glm::vec3(0.15f), // diffuse
+        glm::vec3(1.0f),  // specular
+        1.0f
+    );
 
 
     //------------------Gestion du départ (feu + lakitu)-----------------------------
@@ -316,28 +318,28 @@ void initialize_scene(Viewer &viewer) {
         auto blackMat = std::make_shared<Material>(
             glm::vec3(0.02f, 0.02f, 0.02f), // ambient (un peu visible)
             glm::vec3(0.05f, 0.05f, 0.05f), // diffuse
-            glm::vec3(0.0f),               // specular (mat)
+            glm::vec3(0.0f),                // specular (mat)
             1.0f
         );
 
         redMat = std::make_shared<Material>(
-            glm::vec3(0.1f, 0.0f, 0.0f), // ambient (un peu visible)
-            glm::vec3(1.0f, 0.0f, 0.0f), // diffuse
-            glm::vec3(0.0f),               // specular (mat)
-            1.0f
+            glm::vec3(0.8f, 0.1f, 0.1f), // ambient (un peu visible)
+            glm::vec3(1.0f, 0.2f, 0.2f), // diffuse
+            glm::vec3(0.5f),             // specular (mat)
+            32.0f
         );
 
         greenMat = std::make_shared<Material>(
             glm::vec3(0.0f, 0.1f, 0.0f), // ambient (un peu visible)
             glm::vec3(0.0f, 1.0f, 0.0f), // diffuse
-            glm::vec3(0.0f),               // specular (mat)
-            1.0f
+            glm::vec3(0.5f),             // specular (mat)
+            32.0f
         );
 
         offMat = std::make_shared<Material>(
-            glm::vec3(0.0f), // ambient (un peu visible)
-            glm::vec3(0.0f), // diffuse
-            glm::vec3(0.0f),               // specular (mat)
+            glm::vec3(0.02f), // ambient (un peu visible)
+            glm::vec3(0.02f), // diffuse
+            glm::vec3(0.5f), // specular (mat)
             1.0f
         );
 
@@ -356,7 +358,23 @@ void initialize_scene(Viewer &viewer) {
         viewer.addRenderable(leftFire);
         viewer.addRenderable(middleFire);
         viewer.addRenderable(rightFire);
+
     }
+
+    glm::vec3 target(28.5, 1.17, -1.6);
+    glm::vec3 firePos(24.25, 3.0, -5.05), fireDir = glm::normalize(target - firePos); // vers la piste
+    fireSpot = std::make_shared<SpotLight>(
+        firePos,
+        fireDir,
+        glm::vec3(0.0f),           // ambient
+        glm::vec3(0.0f),           // diffuse (off au départ)
+        glm::vec3(0.0f),
+        1.0f, 0.0f, 0.0f,
+        std::cos(glm::radians(20.0f)),
+        std::cos(glm::radians(40.0f))
+    );
+
+    viewer.addSpotLight(fireSpot);
 
     //----------------- Ajout des coureurs ---------------------------
 
@@ -615,8 +633,10 @@ int main() {
             leftFire->setMaterial(offMat);
             middleFire->setMaterial(offMat);
             rightFire->setMaterial(offMat);
+            fireSpot->setDiffuse(glm::vec3(0.0f));
         }else if (time <= 13.0) {
             leftFire->setMaterial(redMat);
+            fireSpot->setDiffuse(glm::vec3(3.0f, 0.0f, 0.0f));
         }else if (time <= 14.0) {
             middleFire->setMaterial(redMat);
         }else if (time <= 15.0) {
@@ -625,6 +645,7 @@ int main() {
             leftFire->setMaterial(greenMat);
             middleFire->setMaterial(greenMat);
             rightFire->setMaterial(greenMat);
+            fireSpot->setDiffuse(glm::vec3(0.0f, 3.0f, 0.0f));
         }
 
         if (!camera_follow_kart && camera_animation_timer - time <= 0.0f) {
@@ -1716,7 +1737,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
         lap2_start_time + 14.0f
     );
 
-     // straight line after the red shell hit, low speed
+    // straight line after the red shell hit, low speed
 
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
