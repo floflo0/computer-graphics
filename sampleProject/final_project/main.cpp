@@ -33,11 +33,13 @@
 
 KartPtr kart;
 TexturedLightedMeshRenderablePtr steel_driver;
+TexturedLightedMeshRenderablePtr lakitu;
 
 MaterialPtr redMat;
 MaterialPtr greenMat;
 MaterialPtr offMat;
 
+LightedCubeRenderablePtr feuBoitier;
 LightedSphereRenderablePtr leftFire;
 LightedSphereRenderablePtr middleFire;
 LightedSphereRenderablePtr rightFire;
@@ -50,6 +52,12 @@ void movingBobomb(Viewer& viewer, TexturedLightedMeshRenderablePtr &bobOmb);
 
 float lap2_start_time;
 
+MaterialPtr invisibleMat = std::make_shared<Material>(
+    glm::vec3(0.0f),
+    glm::vec3(0.0f),
+    glm::vec3(0.0f),
+    0.0f
+);
 
 
 static float camera_intro_animation(std::shared_ptr<Camera> camera) {
@@ -309,7 +317,7 @@ void initialize_scene(Viewer &viewer) {
 
     // Create Lakitu
     const std::string lakitu_path = "../../sfmlGraphicsPipeline/meshes/lakitu.obj";
-    auto lakitu = std::make_shared<TexturedLightedMeshRenderable>(textureShader, lakitu_path, myMaterial, "../../sfmlGraphicsPipeline/textures/lakitu.png");
+    lakitu = std::make_shared<TexturedLightedMeshRenderable>(textureShader, lakitu_path, myMaterial, "../../sfmlGraphicsPipeline/textures/lakitu.png");
 
     lakitu->setGlobalTransform(getTranslationMatrix(24.0f, 3.5f, -5.2f) * getRotationMatrix(M_PI_4f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(0.02f));
     viewer.addRenderable(lakitu);
@@ -343,7 +351,7 @@ void initialize_scene(Viewer &viewer) {
             1.0f
         );
 
-        auto feuBoitier = std::make_shared<LightedCubeRenderable>(phongShader, false, blackMat);
+        feuBoitier = std::make_shared<LightedCubeRenderable>(phongShader, false, blackMat);
         feuBoitier -> setGlobalTransform(getTranslationMatrix(glm::vec3(24.1f, 3.0f, -5.2f)) * getRotationMatrix(M_PI_4f, 0.0f, 1.0f, 0.0f) * getScaleMatrix(2.2f, 0.6f, 0.6f));
         viewer.addRenderable(feuBoitier);
 
@@ -651,6 +659,10 @@ int main() {
         const float time = viewer.getTime();
 
         if (time <= 12.0) {
+            leftFire->setRenderMode(Renderable::WINDOW);
+            middleFire->setRenderMode(Renderable::WINDOW);
+            rightFire->setRenderMode(Renderable::WINDOW);
+            feuBoitier->setRenderMode(Renderable::WINDOW);
             leftFire->setMaterial(offMat);
             middleFire->setMaterial(offMat);
             rightFire->setMaterial(offMat);
@@ -662,13 +674,17 @@ int main() {
             middleFire->setMaterial(redMat);
         }else if (time <= 15.0) {
             rightFire->setMaterial(redMat);
-        }else if (time <= 15.8) {
+        }else if (time <= 17) {
             leftFire->setMaterial(greenMat);
             middleFire->setMaterial(greenMat);
             rightFire->setMaterial(greenMat);
             firePointLight->setDiffuse(glm::vec3(0.0f, 3.0f, 0.0f));
-        }else if (time >= 17) {
+        }else if (time <= 18) {
             firePointLight->setDiffuse(glm::vec3(0.0f));
+            leftFire->setRenderMode(Renderable::TEXTURE);
+            middleFire->setRenderMode(Renderable::TEXTURE);
+            rightFire->setRenderMode(Renderable::TEXTURE);
+            feuBoitier->setRenderMode(Renderable::TEXTURE);
         }
 
         if (!camera_follow_kart && camera_animation_timer - time <= 0.0f) {
@@ -705,6 +721,15 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
             {28.5f, 1.17f, -1.6f},
             glm::angleAxis(-M_PI_2f, glm::vec3(0, 1, 0)),
             glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    lakitu->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {24.0f, 3.5f, -5.2f},
+            glm::angleAxis(M_PI_4f, glm::vec3(0, 1, 0)),
+            glm::vec3(0.02f)
         ),
         animation_time
     );
@@ -752,12 +777,30 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
         animation_time
     );
 
+    lakitu->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {24.0f, 3.5f, -5.2f},
+            glm::angleAxis(M_PI_4f, glm::vec3(0, 1, 0)),
+            glm::vec3(0.02f)
+        ),
+        animation_time
+    );
+
     animation_time += 0.2f;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {3.8f, 1.17f, -4.5f},
             glm::angleAxis(glm::radians(210.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
+        ),
+        animation_time
+    );
+    
+    lakitu->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {24.0f, 3.5f, -5.2f},
+            glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(epsilon)
         ),
         animation_time
     );
@@ -920,12 +963,38 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
         animation_time
     );
 
+    lakitu->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {22.0, 0.0f, -37.0f},
+            glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(epsilon)
+        ),
+        animation_time
+    );
+
+    lakitu->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {22.0, 0.0f, -37.0f},
+            glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(0.02f)
+        ),
+        animation_time
+    );
+
     animation_time += 0.2f;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {22.0f, -3.0f, -38.0f},
             glm::angleAxis(glm::radians(30.0f), glm::vec3(0, 1, 0)),
             glm::vec3(scale)
+        ),
+        animation_time
+    );
+    lakitu->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {22.0, -2.5f, -37.0f},
+            glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(0.02f)
         ),
         animation_time
     );
@@ -940,13 +1009,69 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
         animation_time
     );
 
+    lakitu->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {22.0, -5.5f, -37.0f},
+            glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(0.02f)
+        ),
+        animation_time
+    );
 
-    animation_time += 1.4f;
+    animation_time += 2.0f;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
-            {22.0f, -120.0f, -38.0f},
+            {22.0f, 3.0f, -38.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
-            glm::vec3(epsilon)
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    lakitu->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {22.0, 3.5f, -37.0f},
+            glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(0.02f)
+        ),
+        animation_time
+    );
+
+
+    animation_time += 0.8f;
+    kart_root->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {21.0f, 3.0f, -38.0f},
+            glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    lakitu->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {21.0, 3.5f, -37.0f},
+            glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(0.02f)
+        ),
+        animation_time
+    );
+
+    animation_time += 1.0f;
+    kart_root->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {21.0f, 1.0f, -38.0f},
+            glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    lakitu->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {21.0, 1.5f, -37.0f},
+            glm::angleAxis(glm::radians(180.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(0.02f)
         ),
         animation_time
     );
@@ -955,14 +1080,33 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
 
     // Letting some time for Lakitu to put the kart back on the track
 
-    animation_time += 3.0f;
+    animation_time += 1.0f;
     kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {21.0f, 0.4f, -38.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
+            glm::vec3(scale)
+        ),
+        animation_time
+    );
+
+    lakitu->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {22.0, 20.0f, -38.0f},
+            glm::angleAxis(M_PI_4f, glm::vec3(0, -1, 0)),
             glm::vec3(epsilon)
         ),
         animation_time
+    );
+
+
+    lakitu->addGlobalTransformKeyframe(
+        GeometricTransformation(
+            {22.0, 20.0f, -38.0f},
+            glm::angleAxis(M_PI_4f, glm::vec3(0, -1, 0)),
+            glm::vec3(epsilon)
+        ),
+        1000.0f
     );
 
     animation_time += 10e-6;
