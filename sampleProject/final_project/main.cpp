@@ -947,7 +947,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
     // Letting some time for Lakitu to put the kart back on the track
 
     animation_time += 3.0f;
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {21.0f, 0.4f, -38.0f},
             glm::angleAxis(glm::radians(0.0f), glm::vec3(0, 1, 0)),
@@ -2188,7 +2188,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
 
     // endless animation to not loop
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {20.5f, 1.17, -1.6f},   
             glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
@@ -2197,7 +2197,7 @@ void kartBowser_animation(std::shared_ptr<SkeletonRenderable> &kart_root) {
         lap2_start_time + 47.00000001f
     );
 
-    kart->addGlobalTransformKeyframe(
+    kart_root->addGlobalTransformKeyframe(
         GeometricTransformation(
             {20.5f, -1000.0f, -1.6f},   
             glm::angleAxis(glm::radians(270.0f), glm::vec3(0, 1, 0)),
